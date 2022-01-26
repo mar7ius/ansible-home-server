@@ -1,0 +1,23 @@
+# Ansible Managed
+---
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    eno1:
+      dhcp4: no
+    eno2:
+      dhcp4: no
+  bonds:
+    bond0:
+      interfaces: [eno1, eno2]
+      addresses: [192.168.1.15/24]
+      gateway4: 192.168.1.254
+      parameters:
+        mode: 802.3ad
+        transmit-hash-policy: layer3+4
+        mii-monitor-interval: 1
+      nameservers:
+        addresses:
+          - "8.8.8.8"
+          - "9.9.9.9"

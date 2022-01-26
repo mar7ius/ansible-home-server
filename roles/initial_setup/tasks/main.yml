@@ -1,0 +1,61 @@
+---
+# Initial setup - Add HPE packages
+- name: Install the HPE public key for packages published during 2014
+  apt_key:
+    id: 5CE2D476
+    url: https://downloads.linux.hpe.com/SDR/hpPublicKey2048.pub
+    state: present
+- name: Install the HPE public key for packages published during 2015
+  apt_key:
+    id: B1275EA3
+    url: https://downloads.linux.hpe.com/SDR/hpPublicKey2048_key1.pub
+    state: present
+- name: Install the HPE public key for packages published after 2015
+  apt_key:
+    id: 26C2B797
+    url: https://downloads.linux.hpe.com/SDR/hpePublicKey2048_key1.pub
+    state: present
+- name: Add sources for HP software
+  apt_repository:
+    repo: deb http://downloads.linux.hpe.com/SDR/repo/mcp bionic/10.80 non-free
+    state: present
+- name: Update apt-get repo and cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Install HPE packages
+  apt:
+    name:
+    - hp-ams
+    - hp-health
+    state: latest
+    cache_valid_time: 3600
+
+# Initial setup - Setup Aggregation link on eno1 & eno2
+- name: Ensure that ifenslave is installed
+  apt:
+    name:
+      - ifenslave
+    state: latest
+    cache_valid_time: 3600
+
+- name: Make sure bonding is a kernel module in /etc/modules
+  template:
+    backup: yes
+    src: etc_modules
+    dest: /etc/modules
+
+- name: Set the correct bonding configuration
+  template:
+    backup: yes
+    src: etc_netplan_01-netcfg.yaml
+    dest: /etc/netplan/01-netcfg.yaml
+
+- name: Apply new configuration
+  shell: netplan apply
+
+# Set server hostname
+- name: "Set hostname to {{ server_hostname }}"
+  hostname:
+    name: "{{ server_hostname }}"

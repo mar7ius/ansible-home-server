@@ -1,0 +1,10 @@
+---
+- hosts: all
+
+
+  roles:
+
+    - role: initial_setup
+      tags:
+        - initial_setup
+      when: ( initial_setup_enable | default(False))
