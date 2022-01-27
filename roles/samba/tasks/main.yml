@@ -1,0 +1,30 @@
+- name: Install Samba packages
+  package:
+    name: "{{ samba_packages }}"
+    state: present
+
+- name: Create Samba shares root directory (if not exists)
+  file:
+    state: directory
+    path: "{{ samba_shares_root }}"
+    owner: root
+    group: root
+    mode: "0755"
+  # when: samba_shares|length > 0
+  # tags: samba
+
+- name: Create samba users
+  shell: "(echo {{ item['smbpasswd'] }}; echo {{ item['smbpasswd'] }}) | smbpasswd -s -a {{ item['name'] }}"
+  with_items:
+    - "{{samba_users}}"
+
+- name: Configuring samba shares
+  template:
+    src: config_smb.conf
+    dest: /etc/samba/smb.conf
+    owner: root
+    group: root
+    mode: 0644
+  validate: 'testparm -s %s'
+  notify:
+    - restart smbd

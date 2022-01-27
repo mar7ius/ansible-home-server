@@ -1,0 +1,16 @@
+---
+samba_packages:
+  - samba
+  - samba-vfs-modules
+
+
+samba_shares_root: /data
+samba_shares_group: ananas
+
+
+media_share_path: /data/media
+downloads_share_path: /data/downloads
+# docker_share_path: /data/docker
+
+samba_users:
+  - {name: 'ananas', groups: 'ananas', smbpasswd: 'password'}
