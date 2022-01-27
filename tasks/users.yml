@@ -1,0 +1,16 @@
+---
+# Create a new group & user to be used in samba
+- name: Create ananas group
+  group:
+    name: ananas
+    state: present
+
+- name: Create ananas user
+  user:
+    name: ananas
+    state: present
+    system: yes
+    update_password: on_create
+    create_home: no
+    group: ananas
+    shell: /usr/sbin/nologin
