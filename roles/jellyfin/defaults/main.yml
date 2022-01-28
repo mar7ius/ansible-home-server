@@ -6,10 +6,10 @@ jellyfin_config_directory: "{{ docker_home }}/jellyfin/config"
 jellyfin_movies_directory: "{{ movies_root }}"
 jellyfin_movies_permissions: "rw"
 
-jellyfin_tv_directory: "{{ tv_root }}"
+jellyfin_tv_directory: "{{ tvshows_root }}"
 jellyfin_tv_permissions: "rw"
 
-jellyfin_spectacles_directory: "{{ spectacles_root }}"
+jellyfin_spectacles_directory: "{{ speclacles_root }}"
 
 jellyfin_user_id: "0"
 jellyfin_group_id: "0"

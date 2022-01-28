@@ -7,10 +7,9 @@ samba_packages:
 samba_shares_root: /data
 samba_shares_group: ananas
 
-
-media_share_path: /data/media
-downloads_share_path: /data/downloads
-# docker_share_path: /data/docker
+media_share_path: "{{ medias_root }}"
+downloads_share_path: "{{ downloads_root }}"
+docker_share_path: "{{ docker_home }}"
 
 samba_users:
   - {name: 'ananas', groups: 'ananas', smbpasswd: 'password'}

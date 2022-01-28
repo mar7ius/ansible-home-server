@@ -10,8 +10,8 @@
     owner: root
     group: root
     mode: "0755"
-  # when: samba_shares|length > 0
-  # tags: samba
+  when: samba_shares|length > 0
+  tags: samba
 
 - name: Create samba users
   shell: "(echo {{ item['smbpasswd'] }}; echo {{ item['smbpasswd'] }}) | smbpasswd -s -a {{ item['name'] }}"

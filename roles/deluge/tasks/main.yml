@@ -7,6 +7,7 @@
   with_items:
     - "{{ deluge_config_directory }}"
     - "{{ deluge_download_directory }}"
+    - "{{ deluge_watch_directory }}"
 
 - name: Deluge Docker Container
   docker_container:
