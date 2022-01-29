@@ -10,13 +10,18 @@
     owner: root
     group: root
     mode: "0755"
-  when: samba_shares|length > 0
-  tags: samba
 
-- name: Create samba users
-  shell: "(echo {{ item['smbpasswd'] }}; echo {{ item['smbpasswd'] }}) | smbpasswd -s -a {{ item['name'] }}"
-  with_items:
-    - "{{samba_users}}"
+- name: Create Samba users if they don't exist
+  shell: >
+    set -o nounset -o pipefail -o errexit &&
+    (pdbedit --user={{ item.name }} 2>&1 > /dev/null) \
+    || (echo {{ item.smbpasswd }}; echo {{ item.smbpasswd }}) \
+    | smbpasswd -s -a {{ item.name }}
+  args:
+    executable: /bin/bash
+  with_items: "{{ samba_users }}"
+  register: create_user_output
+  changed_when: "'Added user' in create_user_output.stdout"
 
 - name: Configuring samba shares
   template:
@@ -25,6 +30,6 @@
     owner: root
     group: root
     mode: 0644
-  validate: 'testparm -s %s'
+    validate: 'testparm -s %s'
   notify:
-    - restart smbd
+    - Restart Samba services # Handler
