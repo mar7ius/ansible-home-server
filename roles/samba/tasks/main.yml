@@ -9,14 +9,14 @@
     path: "{{ samba_shares_root }}"
     owner: root
     group: root
-    mode: "0755"
+    mode: "0775"
 
 - name: Create Samba users if they don't exist
   shell: >
     set -o nounset -o pipefail -o errexit &&
     (pdbedit --user={{ item.name }} 2>&1 > /dev/null) \
     || (echo {{ item.smbpasswd }}; echo {{ item.smbpasswd }}) \
-    | smbpasswd -s -a {{ item.name }}
+    | pdbedit -s -a {{ item.name }}
   args:
     executable: /bin/bash
   with_items: "{{ samba_users }}"
@@ -31,5 +31,23 @@
     group: root
     mode: 0644
     validate: 'testparm -s %s'
+
+- name: Configuring media share rights
+  file:
+    path: "{{ media_share_path }}"
+    state: directory
+    owner: root
+    group: "{{ samba_shares_group }}"
+    mode: "0775"
+    recurse: yes
+
+- name: Configuring downloads share rights
+  file:
+    path: "{{ downloads_share_path }}"
+    state: directory
+    owner: root
+    group: "{{ samba_shares_group }}"
+    mode: "0775"
+    recurse: yes
   notify:
     - Restart Samba services # Handler
