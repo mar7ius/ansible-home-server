@@ -14,7 +14,7 @@
       - "{{ jellyfin_config_directory }}:/config:rw"
       - "{{ jellyfin_movies_directory }}:/movies:{{ jellyfin_movies_permissions }}"
       - "{{ jellyfin_spectacles_directory }}:/spectacles:{{ jellyfin_movies_permissions }}"
-      - "{{ jellyfin_tv_directory }}:/tv:{{ jellyfin_tv_permissions }}"
+      - "{{ jellyfin_tv_directory }}:/tvshow:{{ jellyfin_tv_permissions }}"
 
     ports:
       - "{{ jellyfin_port_http }}:8096"
@@ -24,7 +24,7 @@
       PUID: "{{ jellyfin_user_id }}"
       PGID: "{{ jellyfin_group_id }}"
     # intel hardware acceleration:
-    device: /dev/dri:/dev/dri
+    # devices: /dev/dri:/dev/dri
     restart_policy: unless-stopped
     memory: 1g
     labels:
