@@ -1,10 +1,103 @@
 ---
 - hosts: all
+  any_errors_fatal: true
 
+  pre_tasks:
+    - import_tasks: tasks/users.yml
+      tags: users
 
   roles:
-
+    ## Requirements:
+    - role: geerlingguy.docker
+      tags:
+        - docker
+    ## HPE Packages & Link Aggregation:
     - role: initial_setup
       tags:
         - initial_setup
       when: ( initial_setup_enable | default(False))
+
+    - role: zfs
+      tags:
+        - zfs
+      when: ( zfs_enable | default(False))
+
+    - role: samba
+      tags:
+        - samba
+      when: ( samba_enable | default(False))
+
+    ## Container deployment
+    - role: docker
+      tags:
+        - docker
+      when: ( docker_enable | default(False))
+
+    ## Containers administration
+    - role: portainer
+      tags:
+        - portainer
+      when: ( portainer_enable | default(False))
+
+    - role: watchtower
+      tags:
+        - watchtower
+      when: ( watchtower_enable | default(False))
+
+    # Home of services
+    - role: heimdall
+      tags:
+        - heimdall
+      when: ( heimdall_enable | default(False))
+
+    ## Media management apps:
+    - role: deluge
+      tags:
+        - deluge
+      when: ( deluge_enable | default(False))
+
+    - role: qbittorrent
+      tags:
+        - qbittorrent
+      when: ( qbittorrent_enable | default(False))
+
+    - role: nzbget
+      tags:
+        - nzbget
+      when: ( nzbget_enable | default(False))
+    - role: radarr
+      tags:
+        - radarr
+      when: ( radarr_enable | default(False))
+    - role: sonarr
+      tags:
+        - sonarr
+      when: ( sonarr_enable | default(False))
+
+    - role: jellyfin
+      tags:
+        - jellyfin
+      when: ( jellyfin_enable | default(False))
+
+    ## Networking/proxiying:
+    - role: authelia
+      tags:
+        - authelia
+      when: ( authelia_enable | default(False))
+
+    - role: cloudflare_ddns
+      tags:
+        - cloudflare_ddns
+      when: ( cloudflare_ddns_enable | default(False))
+
+    - role: traefik
+      tags:
+        - traefik
+      when: ( traefik_enable | default(False))
+
+
+    ## Monitoring:
+    - role: netdata
+      tags:
+        - netdata
+      when: ( netdata_enable | default(False))
