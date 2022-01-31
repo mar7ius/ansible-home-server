@@ -1,0 +1,52 @@
+---
+- name: Create Authelia Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    # mode: 0755
+  with_items:
+    - "{{ authelia_config_directory }}"
+
+- name: Authelia Notification file
+  file:
+    path: "{{ authelia_config_directory }}/notification.txt"
+    state: touch
+
+- name: Template Authelia configuration.yml
+  template:
+    src: configuration.yml
+    dest: "{{ authelia_config_directory }}/configuration.yml"
+  register: authelia_config
+
+- name: Authelia user_database
+  template:
+    src: users_database.yml
+    dest: "{{ authelia_config_directory }}/users_database.yml"
+  register: authelia_user_database
+
+  # Authelia (Lite) - Self-Hosted Single Sign-On and Two-Factor Authentication
+- name: Authelia Docker Container
+  docker_container:
+    name: authelia
+    image: authelia/authelia:4.21.0
+    pull: true
+    volumes:
+      - "{{ authelia_config_directory }}:/config:rw"
+    ports:
+      - "{{ authelia_port }}:9091"
+    env:
+      TZ: "{{ authelia_timezone }}"
+      PUID: "{{ authelia_user_id }}"
+      PGID: "{{ authelia_group_id }}"
+    restart_policy: unless-stopped
+    memory: "{{ authelia_memory }}"
+    labels:
+      traefik.enable: "true"
+      # traefik.http.routers.authelia.entrypoints: "https"
+      traefik.http.routers.authelia.rule: "Host(`{{ authelia_hostname }}.{{ server_domain }}`)"
+      traefik.http.routers.authelia.tls.certresolver: "letsencrypt"
+      traefik.http.routers.authelia.tls.domains[0].main: "{{ server_domain }}"
+      traefik.http.routers.authelia.tls.domains[0].sans: "*.{{ server_domain }}"
+      traefik.http.routers.authelia.middlewares: "{{ authelia_middleware_chain }}"
+      traefik.http.services.authelia.loadbalancer.server.port: "9091"
+    recreate: "{{ authelia_config is changed }}"
