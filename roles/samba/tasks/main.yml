@@ -16,7 +16,7 @@
     set -o nounset -o pipefail -o errexit &&
     (pdbedit --user={{ item.name }} 2>&1 > /dev/null) \
     || (echo {{ item.smbpasswd }}; echo {{ item.smbpasswd }}) \
-    | pdbedit -s -a {{ item.name }}
+    | pdbedit -t -a -u {{ item.name }}
   args:
     executable: /bin/bash
   with_items: "{{ samba_users }}"
@@ -49,5 +49,5 @@
     group: "{{ samba_shares_group }}"
     mode: "0775"
     recurse: yes
-  notify:
-    - Restart Samba services # Handler
+  # notify:
+  #   - Restart Samba services # Handler
