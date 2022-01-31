@@ -8,3 +8,4 @@ netdata_port: "19999"
 
 # specs
 netdata_memory: 1g
+netdata_middleware_chain: "chain-no-auth@file"

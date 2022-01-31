@@ -46,4 +46,5 @@
       traefik.http.routers.heimdall.tls.certresolver: "letsencrypt"
       traefik.http.routers.heimdall.tls.domains[0].main: "{{ server_domain }}"
       traefik.http.routers.heimdall.tls.domains[0].sans: "*.{{ server_domain }}"
+      traefik.http.routers.heimdall.middlewares: "{{ heimdall_middleware_chain }}"
       traefik.http.services.heimdall.loadbalancer.server.port: "80"

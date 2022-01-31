@@ -22,3 +22,4 @@ deluge_timezone: "{{ server_timezone }}"
 
 # specs
 deluge_memory: 1g
+deluge_middleware_chain: "chain-no-auth@file"

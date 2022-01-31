@@ -17,3 +17,4 @@ sonarr_hostname: "sonarr"
 
 # specs
 sonarr_memory: 1g
+sonarr_middleware_chain: "chain-no-auth@file"

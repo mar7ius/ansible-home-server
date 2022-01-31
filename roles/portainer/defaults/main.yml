@@ -11,3 +11,4 @@ portainer_hostname: "portainer"
 
 # specs
 portainer_memory: 1g
+portainer_middleware_chain: "chain-no-auth@file"

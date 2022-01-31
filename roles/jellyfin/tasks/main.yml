@@ -33,4 +33,5 @@
       traefik.http.routers.jellyfin.tls.certresolver: "letsencrypt"
       traefik.http.routers.jellyfin.tls.domains[0].main: "{{ server_domain }}"
       traefik.http.routers.jellyfin.tls.domains[0].sans: "*.{{ server_domain }}"
+      traefik.http.routers.jellyfin.middlewares: "{{ jellyfin_middleware_chain }}"
       traefik.http.services.jellyfin.loadbalancer.server.port: "8096"
