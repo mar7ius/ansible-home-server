@@ -1,0 +1,101 @@
+---
+- name: Install zfs and auto-snapshot
+  apt:
+    name:
+    - zfsutils-linux
+    - zfs-auto-snapshot
+    state: latest
+    cache_valid_time: 3600
+
+- name: Ensure /data exists
+  file:
+    path: /data
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- zpool_facts: properties='free,size'
+
+- debug: msg='ZFS pool {{ item.name }} exists? -> [{{ item.name == zfs_main_name }}] It has {{ item.free }} free space out of {{ item.size }}.'
+  with_items: '{{ ansible_zfs_pools }}'
+
+- name: Create zsh pool '{{zfs_main_name}}' with 2 SAS disks
+  shell: 'zpool create -o ashift={{zfs_main_ashift}} {{zfs_main_name}} mirror {{zfs_main_disk1}} {{zfs_main_disk2}}'
+  when: 'not (ansible_zfs_pools|length > 0 and ansible_zfs_pools[0].name == zfs_main_name)'
+
+
+## Main pool and filesystems:
+- name: set autoexpand on '{{zfs_main_name}}'
+  shell: 'zpool set autoexpand=on {{zfs_main_name}}'
+  when: 'not (ansible_zfs_pools|length > 0 and ansible_zfs_pools[0].name == zfs_main_name)'
+  # system won't update a time stamp every time a file is accessed :
+- name: disable atime on '{{zfs_main_name}}'
+  shell: 'zfs set atime=off {{zfs_main_name}}'
+  when: 'not (ansible_zfs_pools|length > 0 and ansible_zfs_pools[0].name == zfs_main_name)'
+
+- name: Activate LZ4 compression on '{{zfs_main_name}}'
+  shell: 'zfs set compression=lz4 {{zfs_main_name}}'
+  when: 'not (ansible_zfs_pools|length > 0 and ansible_zfs_pools[0].name == zfs_main_name)'
+
+- name: Create filesystem for media files
+  community.general.zfs:
+    name: '{{ media_volume }}'
+    state: present
+    extra_zfs_properties:
+      mountpoint: '{{ media_mountpoint }}'
+      recordsize: '1M'
+      exec: off
+      compression: off
+
+- name: Create filesystem for docker
+  community.general.zfs:
+    name: '{{ docker_volume }}'
+    state: present
+    extra_zfs_properties:
+      mountpoint: '{{ docker_mountpoint }}'
+      atime: off
+      compression: off
+
+# Secondary pool and filesystems:
+
+- debug: msg='ZFS pool {{ item.name }} exists? -> [{{ item.name == zfs_secondary_name }}] It has {{ item.free }} free space out of {{ item.size }}.'
+  with_items: '{{ ansible_zfs_pools }}'
+
+- name: Create zsh pool '{{zfs_secondary_name}}' with 1 SDD disks
+  shell: 'zpool create -o ashift={{zfs_secondary_ashift}} {{zfs_secondary_name}} {{zfs_secondary_disk1}}'
+  when: 'not (ansible_zfs_pools|length > 0 and ansible_zfs_pools[1].name == zfs_secondary_name)'
+
+
+## Main pool and filesystems:
+- name: set autoexpand on '{{zfs_secondary_name}}'
+  shell: 'zpool set autoexpand=on {{zfs_secondary_name}}'
+  when: 'not (ansible_zfs_pools|length > 0 and ansible_zfs_pools[1].name == zfs_secondary_name)'
+- name: Activate ssd_strim '{{zfs_secondary_name}}'
+  shell: 'zpool set autotrim=on {{zfs_secondary_name}}'
+  when: 'not (ansible_zfs_pools|length > 0 and ansible_zfs_pools[1].name == zfs_secondary_name)'
+  # system won't update a time stamp every time a file is accessed :
+- name: disable atime on '{{zfs_secondary_name}}'
+  shell: 'zfs set atime=off {{zfs_secondary_name}}'
+  when: 'not (ansible_zfs_pools|length > 0 and ansible_zfs_pools[1].name == zfs_secondary_name)'
+
+- name: Activate LZ4 compression on '{{zfs_secondary_name}}'
+  shell: 'zfs set compression=lz4 {{zfs_secondary_name}}'
+  when: 'not (ansible_zfs_pools|length > 0 and ansible_zfs_pools[1].name == zfs_secondary_name)'
+
+- name: Create filesystem for torrents downloads
+  community.general.zfs:
+    name: '{{ torrents_downloads_volume }}'
+    state: present
+    extra_zfs_properties:
+      mountpoint: '{{ torrents_downloads_mountpoint }}'
+      recordsize: '16K'
+      compression: off
+- name: Create filesystem for newsgroups downloads
+  community.general.zfs:
+    name: '{{ newsgroups_downloads_volume }}'
+    state: present
+    extra_zfs_properties:
+      mountpoint: '{{ newsgroups_downloads_mountpoint }}'
+      recordsize: '1M'
+      compression: off
