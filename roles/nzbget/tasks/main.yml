@@ -10,6 +10,7 @@
   docker_container:
     name: nzbget
     image: linuxserver/nzbget
+    hostname: nzbget
     pull: true
     volumes:
       - "{{ nzbget_download_directory }}:/downloads:rw"
@@ -25,8 +26,10 @@
     labels:
       traefik.enable: "{{ nzbget_available_externally }}"
       traefik.http.routers.nzbget.rule: "Host(`{{ nzbget_hostname }}.{{ server_domain }}`)"
+      traefik.http.routers.nzbget.middlewares: "authelia@docker"
+
       traefik.http.routers.nzbget.tls.certresolver: "letsencrypt"
       traefik.http.routers.nzbget.tls.domains[0].main: "{{ server_domain }}"
       traefik.http.routers.nzbget.tls.domains[0].sans: "*.{{ server_domain }}"
-      traefik.http.routers.nzbget.middlewares: "{{ nzbget_middleware_chain }}"
+
       traefik.http.services.nzbget.loadbalancer.server.port: "6789"
