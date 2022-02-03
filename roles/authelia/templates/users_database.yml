@@ -7,7 +7,7 @@ users:
       - admins
       - ananas
 
-  # {{ authelia_user }}:
+  # {{ authelia_user.name }}:
   #   displayname: "{{ authelia_user.displayname }}"
   #   password: "{{ authelia_user.hashed_password }}"
   #   email: "{{ authelia_user.email }}"

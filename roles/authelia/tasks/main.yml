@@ -30,6 +30,7 @@
     name: authelia
     image: authelia/authelia:4.21.0
     pull: true
+    hostname: authelia
     volumes:
       - "{{ authelia_config_directory }}:/config:rw"
     ports:
@@ -41,12 +42,13 @@
     restart_policy: unless-stopped
     memory: "{{ authelia_memory }}"
     labels:
-      traefik.enable: "true"
-      # traefik.http.routers.authelia.entrypoints: "https"
-      traefik.http.routers.authelia.rule: "Host(`{{ authelia_hostname }}.{{ server_domain }}`)"
+      traefik.enable: "true" # External acces - default true
+      traefik.http.routers.authelia.rule: "Host(`{{ authelia_hostname }}.{{ server_domain }}`)" # ex. Host(`login.example.com`)
+      traefik.http.routers.authelia.entrypoints: "websecure"
+
       traefik.http.routers.authelia.tls.certresolver: "letsencrypt"
       traefik.http.routers.authelia.tls.domains[0].main: "{{ server_domain }}"
       traefik.http.routers.authelia.tls.domains[0].sans: "*.{{ server_domain }}"
-      traefik.http.routers.authelia.middlewares: "{{ authelia_middleware_chain }}"
+
       traefik.http.services.authelia.loadbalancer.server.port: "9091"
     recreate: "{{ authelia_config is changed }}"

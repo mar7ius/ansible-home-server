@@ -1,7 +1,7 @@
 authelia_secret: "SECRET_KEY_HERE"
 
-authelia_sub_domain: "authelia"
-server_domain: "example.com"
+# authelia_sub_domain: "authelia"
+# server_domain: "example.com"
 
 duo_api_hostname: "DUO_HOSTNAME_HERE"
 duo_api_integration_key: "INTEGRATION_KEY_HERE"
@@ -18,29 +18,29 @@ authelia_admin_user:
     hashed_password: "admin",
     email: "admin@admin.com",
   }
-authelia_user:
-  {
-    name: "user",
-    displayname: "user",
-    hashed_password: "user",
-    email: "user@user.com",
-  }
+# authelia_user:
+#   {
+#     name: "user",
+#     displayname: "user",
+#     hashed_password: "user",
+#     email: "user@user.com",
+#   }
 
 
 # uid / gid
 authelia_user_id: "0"
 authelia_group_id: "0"
 
-# error logging
+# # error logging
 authelia_log_level: "error"
 
-# network
+# # network
 authelia_port: "9091"
-authelia_hostname: "authelia"
+authelia_hostname: "login" # acces authelia portal from login.example.com
+# default url redirection when accessed direclty via login.example.com :
+authelia_redirection_url: "https://heimdall.{{ server_domain }}"
 
 authelia_timezone: "{{ server_timezone }}"
 
-# specs
+# # specs
 authelia_memory: 1g
-
-authelia_middleware_chain: "chain-authelia@file"
