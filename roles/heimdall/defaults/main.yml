@@ -17,4 +17,3 @@ heimdall_group_id: "1310"
 
 # specs
 heimdall_memory: 1g
-heimdall_middleware_chain: "chain-no-auth@file"
