@@ -22,4 +22,3 @@ qbittorrent_timezone: "{{ server_timezone }}"
 
 # specs
 qbittorrent_memory: 1g
-qbittorrent_middleware_chain: "chain-no-auth@file"

@@ -1,5 +1,5 @@
 ---
-- name: Create Qbittorent Directories
+- name: Create Qbittorrent Directories
   file:
     path: "{{ item }}"
     state: directory
@@ -9,7 +9,7 @@
     - "{{ qbittorrent_download_directory }}"
     - "{{ qbittorrent_watch_directory }}"
 
-- name: qbittorrent Docker Container
+- name: Qbittorrent Docker Container
   docker_container:
     name: qbittorrent
     image: linuxserver/qbittorrent
@@ -19,7 +19,8 @@
       - "{{ qbittorrent_download_directory }}:/root/Downloads:rw"
     ports:
       - "{{ qbittorrent_port }}:8585"
-      - "6881:6881"
+      # - "6881:6881"
+    hostname: qbittorrent
     env:
       TZ: "{{ qbittorrent_timezone }}"
       PUID: "{{ qbittorrent_user_id }}"
@@ -30,8 +31,11 @@
     labels:
       traefik.enable: "{{ qbittorrent_available_externally }}"
       traefik.http.routers.qbittorrent.rule: "Host(`{{ qbittorrent_hostname }}.{{ server_domain }}`)"
+      traefik.http.routers.qbittorrent.entrypoints: "websecure"
+      traefik.http.routers.qbittorrent.middlewares: "authelia@docker"
+
       traefik.http.routers.qbittorrent.tls.certresolver: "letsencrypt"
       traefik.http.routers.qbittorrent.tls.domains[0].main: "{{ server_domain }}"
       traefik.http.routers.qbittorrent.tls.domains[0].sans: "*.{{ server_domain }}"
-      traefik.http.routers.qbittorrent.middlewares: "{{ qbittorrent_middleware_chain }}"
+
       traefik.http.services.qbittorrent.loadbalancer.server.port: "{{ qbittorrent_port }}"
