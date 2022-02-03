@@ -8,36 +8,64 @@
     - "{{ traefik_data_directory }}/letsencrypt"
     - "{{ traefik_data_directory }}/custom-rules"
 
-- name: Template Traefik config.toml
-  template:
-    src: traefik.toml
-    dest: "{{ traefik_data_directory }}/traefik.toml"
-  register: template_config
+# - name: Template Traefik config.toml
+#   template:
+#     src: traefik.toml
+#     dest: "{{ traefik_data_directory }}/traefik.toml"
+#   register: template_config
 
-- name: Template Traefik middleware
-  template:
-    src: middlewares.yml
-    dest: "{{ traefik_data_directory }}/custom-rules/middlewares.yml"
-  register: middleware_config
+# - name: Template Traefik middleware
+#   template:
+#     src: middlewares.yml
+#     dest: "{{ traefik_data_directory }}/custom-rules/middlewares.yml"
+#   register: middleware_config
 
-- name: Template Traefik middleware-chains
-  template:
-    src: middlewares-chains.yml
-    dest: "{{ traefik_data_directory }}/custom-rules/middlewares-chains.yml"
-  register: middleware_chains_config
+# - name: Template Traefik middleware-chains
+#   template:
+#     src: middlewares-chains.yml
+#     dest: "{{ traefik_data_directory }}/custom-rules/middlewares-chains.yml"
+#   register: middleware_chains_config
 
 - name: Traefik Docker Container
   docker_container:
     name: traefik
     image: "{{ traefik_docker_image }}"
     pull: true
-    network_mode: host
+    hostname: traefik
+    ports:
+      - "{{ traefik_port_http }}:80"
+      - "{{ traefik_port_https }}:443"
+      - "{{ traefik_port_ui }}:8083"
     volumes:
-      - "{{ traefik_data_directory }}/traefik.toml:/etc/traefik/traefik.toml:ro"
-      - "{{ traefik_data_directory }}/custom-rules:/etc/traefik/custom-rules:rw"
-      - "{{ traefik_data_directory }}/letsencrypt:/letsencrypt:rw"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "{{ traefik_data_directory }}/letsencrypt:/letsencrypt:rw"
+    command:
+      - "--log.level={{traefik_log_level}}"
+      - "--providers.docker"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--entrypoints.traefik.address=:8083"
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--api.insecure=true"
+      - '--providers.docker.exposedByDefault=false'
+      - "--certificatesresolvers.letsencrypt.acme.dnschallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.dnschallenge.provider={{traefik_dns_provider}}"
+      - "--certificatesresolvers.letsencrypt.acme.email={{server_email}}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.traefik.rule: "Host(`traefik.{{ server_domain }}`)"
+      traefik.http.routers.traefik.service: "api@internal"
+      traefik.http.routers.traefik.entrypoints: "websecure"
+      ## middlewares: ##
+      traefik.http.middlewares.authelia.forwardauth.address: "http://authelia:9091/api/verify?rd=https://{{authelia_hostname}}.{{ server_domain }}"
+      traefik.http.middlewares.authelia.forwardauth.trustForwardHeader: "true"
+      traefik.http.middlewares.authelia.forwardauth.authResponseHeaders: "Remote-User, Remote-Groups, Remote-Name, Remote-Email"
+      traefik.http.routers.traefik.tls.certresolver: "letsencrypt"
+      traefik.http.routers.traefik.tls.domains[0].main: "{{ server_domain }}"
+      traefik.http.routers.traefik.tls.domains[0].sans: "*.{{ server_domain }}"
+
     env: "{{ traefik_environment_variables }}"
     restart_policy: unless-stopped
     memory: "{{ traefik_memory }}"
-    recreate: "{{ template_config is changed }}"
+    # recreate: "{{ template_config is changed }}"

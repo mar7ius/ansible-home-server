@@ -1,0 +1,28 @@
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+
+entryPoints:
+  web:
+    address: :80
+
+  websecure:
+    address: :443
+
+api:
+  insecure: true
+  dashboard: true
+
+providers:
+  docker:
+    network: traefik
+    exposedByDefault: false
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+        email: "{{server_email}}"
+        storage: "/letsencrypt/acme.json"
+        caServer: "{{ traefik_acme_server }}"
+        dnsChallenge:
+          provider: "{{traefik_dns_provider}}"
