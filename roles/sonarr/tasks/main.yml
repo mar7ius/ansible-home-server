@@ -11,6 +11,7 @@
     name: sonarr
     image: linuxserver/sonarr
     pull: true
+    hostname: sonarr
     volumes:
       - "{{ sonarr_tv_directory }}:/tvshows:rw"
       - "{{ sonarr_download_directory }}:/downloads:rw"
@@ -26,8 +27,10 @@
     labels:
       traefik.enable: "{{ sonarr_available_externally }}"
       traefik.http.routers.sonarr.rule: "Host(`{{ sonarr_hostname }}.{{ server_domain }}`)"
+      traefik.http.routers.sonarr.middlewares: "authelia@docker"
+
       traefik.http.routers.sonarr.tls.certresolver: "letsencrypt"
       traefik.http.routers.sonarr.tls.domains[0].main: "{{ server_domain }}"
       traefik.http.routers.sonarr.tls.domains[0].sans: "*.{{ server_domain }}"
-      traefik.http.routers.sonarr.middlewares: "{{ sonarr_middleware_chain }}"
+
       traefik.http.services.sonarr.loadbalancer.server.port: "8989"
