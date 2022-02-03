@@ -15,6 +15,7 @@
       - "{{ portainer_data_directory }}:/data:rw"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "/etc/timezone:/etc/timezone:ro"
+    hostname: portainer
     ports:
       - "{{ portainer_port }}:9000"
     restart_policy: unless-stopped
@@ -22,8 +23,11 @@
     labels:
       traefik.enable: "{{ portainer_available_externally }}"
       traefik.http.routers.portainer.rule: "Host(`{{ portainer_hostname }}.{{ server_domain }}`)"
+      traefik.http.routers.portainer.entrypoints: "websecure"
+      traefik.http.routers.portainer.middlewares: "authelia@docker"
+
       traefik.http.routers.portainer.tls.certresolver: "letsencrypt"
       traefik.http.routers.portainer.tls.domains[0].main: "{{ server_domain }}"
       traefik.http.routers.portainer.tls.domains[0].sans: "*.{{ server_domain }}"
-      traefik.http.routers.portainer.middlewares: "{{ portainer_middleware_chain }}"
+
       traefik.http.services.portainer.loadbalancer.server.port: "9000"
