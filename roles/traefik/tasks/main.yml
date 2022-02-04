@@ -8,11 +8,11 @@
     - "{{ traefik_data_directory }}/letsencrypt"
     - "{{ traefik_data_directory }}/custom-rules"
 
-# - name: Template Traefik config.toml
-#   template:
-#     src: traefik.toml
-#     dest: "{{ traefik_data_directory }}/traefik.toml"
-#   register: template_config
+- name: Template Traefik config.yml
+  template:
+    src: traefik.yml
+    dest: "{{ traefik_data_directory }}/traefik.yml"
+  register: template_config
 
 # - name: Template Traefik middleware
 #   template:
@@ -39,19 +39,7 @@
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "{{ traefik_data_directory }}/letsencrypt:/letsencrypt:rw"
-    command:
-      - "--log.level={{traefik_log_level}}"
-      - "--providers.docker"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      - "--entrypoints.traefik.address=:8083"
-      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
-      - "--api.insecure=true"
-      - '--providers.docker.exposedByDefault=false'
-      - "--certificatesresolvers.letsencrypt.acme.dnschallenge=true"
-      - "--certificatesresolvers.letsencrypt.acme.dnschallenge.provider={{traefik_dns_provider}}"
-      - "--certificatesresolvers.letsencrypt.acme.email={{server_email}}"
-      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+      - "{{ traefik_data_directory }}/traefik.yml:/etc/traefik/traefik.yml:ro"
     labels:
       traefik.enable: "true"
       traefik.http.routers.traefik.rule: "Host(`traefik.{{ server_domain }}`)"
@@ -61,11 +49,11 @@
       traefik.http.middlewares.authelia.forwardauth.address: "http://authelia:9091/api/verify?rd=https://{{authelia_hostname}}.{{ server_domain }}"
       traefik.http.middlewares.authelia.forwardauth.trustForwardHeader: "true"
       traefik.http.middlewares.authelia.forwardauth.authResponseHeaders: "Remote-User, Remote-Groups, Remote-Name, Remote-Email"
+      ## Certificates: ##
       traefik.http.routers.traefik.tls.certresolver: "letsencrypt"
       traefik.http.routers.traefik.tls.domains[0].main: "{{ server_domain }}"
       traefik.http.routers.traefik.tls.domains[0].sans: "*.{{ server_domain }}"
-
     env: "{{ traefik_environment_variables }}"
     restart_policy: unless-stopped
     memory: "{{ traefik_memory }}"
-    # recreate: "{{ template_config is changed }}"
+    recreate: "{{ template_config is changed }}"

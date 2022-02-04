@@ -2,27 +2,44 @@ global:
   checkNewVersion: false
   sendAnonymousUsage: false
 
+log:
+  level: "{{traefik_log_level}}"
+
+
 entryPoints:
   web:
     address: :80
-
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
   websecure:
     address: :443
+    http:
+      tls:
+        certResolver: letsencrypt
+        domains:
+          - main: "{{ server_domain }}"
+            sans:
+              - "*.{{ server_domain }}"
+  traefik:
+    address: :8083
 
 api:
-  insecure: true
+  # insecure: true
   dashboard: true
 
 providers:
   docker:
-    network: traefik
+    # network: traefik_network
     exposedByDefault: false
 
 certificatesResolvers:
   letsencrypt:
     acme:
-        email: "{{server_email}}"
-        storage: "/letsencrypt/acme.json"
-        caServer: "{{ traefik_acme_server }}"
-        dnsChallenge:
-          provider: "{{traefik_dns_provider}}"
+      email: "{{server_email}}"
+      storage: "/letsencrypt/acme.json"
+      caServer: "{{ traefik_acme_server }}"
+      dnsChallenge:
+        provider: "{{traefik_dns_provider}}"
