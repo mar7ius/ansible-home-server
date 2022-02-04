@@ -9,6 +9,11 @@ duo_api_secret_key: "SECRET_KEY_HERE"
 
 session_authelia_secret: "SESSION_SECRET_KEY_HERE"
 
+# storage_encryption_key: "STORAGE_ENCRYPTION_KEY_HERE"
+storage_encryption_key: "7Vp8LW2QV9dtW62bC2yeFvu2Tdhgc7"
+
+
+
 authelia_config_directory: "{{ docker_home }}/authelia"
 
 authelia_admin_user:
@@ -18,13 +23,14 @@ authelia_admin_user:
     hashed_password: "admin",
     email: "admin@admin.com",
   }
-# authelia_user:
-#   {
-#     name: "user",
-#     displayname: "user",
-#     hashed_password: "user",
-#     email: "user@user.com",
-#   }
+
+authelia_user:
+  {
+    name: "user",
+    displayname: "user",
+    hashed_password: "user",
+    email: "user@user.com",
+  }
 
 
 # uid / gid

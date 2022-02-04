@@ -22,13 +22,12 @@
   template:
     src: users_database.yml
     dest: "{{ authelia_config_directory }}/users_database.yml"
-  register: authelia_user_database
 
   # Authelia (Lite) - Self-Hosted Single Sign-On and Two-Factor Authentication
 - name: Authelia Docker Container
   docker_container:
     name: authelia
-    image: authelia/authelia:4.21.0
+    image: authelia/authelia:4.33
     pull: true
     hostname: authelia
     volumes:
