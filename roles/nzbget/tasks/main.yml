@@ -1,20 +1,32 @@
 ---
-- name: Create NZBget Directories
-  file:
-    path: "{{ item }}"
-    state: directory
-  with_items:
-    - "{{ nzbget_data_directory }}"
+# - name: Create NZBget Directories
+#   file:
+#     path: "{{ item }}"
+#     state: directory
+#   with_items:
+#     - "{{ nzbget_data_directory }}"
+- name: Create filesystem for NZBget
+  community.general.zfs:
+    name: "{{ nzbget_volume }}"
+    state: present
+    extra_zfs_properties:
+      mountpoint: "{{ nzbget_mountpoint }}"
 
 - name: NZBGet
   docker_container:
     name: nzbget
     image: linuxserver/nzbget
     hostname: nzbget
+    networks:
+      - name: "{{ custom_network_name }}"
+        aliases:
+          - nzbget
+    network_mode: "{{ custom_network_name }}"
+    networks_cli_compatible: yes
     pull: true
     volumes:
       - "{{ nzbget_download_directory }}:/downloads:rw"
-      - "{{ nzbget_data_directory }}:/config:rw"
+      - "{{ nzbget_mountpoint }}:/config:rw"
     ports:
       - "{{ nzbget_port }}:6789"
     env:
@@ -26,6 +38,7 @@
     labels:
       traefik.enable: "{{ nzbget_available_externally }}"
       traefik.http.routers.nzbget.rule: "Host(`{{ nzbget_hostname }}.{{ server_domain }}`)"
+      traefik.http.routers.nzbget.entrypoints: "websecure"
       traefik.http.routers.nzbget.middlewares: "authelia@docker"
 
       traefik.http.routers.nzbget.tls.certresolver: "letsencrypt"
