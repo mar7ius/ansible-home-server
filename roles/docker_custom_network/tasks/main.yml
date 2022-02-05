@@ -1,0 +1,8 @@
+---
+- name: Ensure Custom Network exists
+  block:
+    - name: Check if Custom Network exists
+      shell: "sudo docker network inspect {{ custom_network_name }}"
+  rescue:
+    - name: Create Custom Network
+      shell: "sudo docker network create -d bridge --attachable {{ custom_network_name }}"
