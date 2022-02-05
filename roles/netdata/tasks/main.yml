@@ -4,10 +4,23 @@
     name: docker
   register: docker_group
 
+- name: Create filesystem for Netdata
+  community.general.zfs:
+    name: "{{ netdata_volume }}"
+    state: present
+    extra_zfs_properties:
+      mountpoint: "{{ netdata_mountpoint }}"
+
 - name: Netdata Docker Container
   docker_container:
     name: netdata
     hostname: "{{ server_hostname }}.{{ server_domain }}"
+    networks:
+      - name: "{{ custom_network_name }}"
+        aliases:
+          - netdata
+    network_mode: "{{ custom_network_name }}"
+    networks_cli_compatible: yes
     image: netdata/netdata
     state: started
     pull: true
@@ -28,8 +41,11 @@
     labels:
       traefik.enable: "{{ netdata_available_externally }}"
       traefik.http.routers.netdata.rule: "Host(`{{ netdata_hostname }}.{{ server_domain }}`)"
+      traefik.http.routers.netdata.entrypoints: "websecure"
+      traefik.http.routers.netdata.middlewares: "authelia@docker"
+
       traefik.http.routers.netdata.tls.certresolver: "letsencrypt"
       traefik.http.routers.netdata.tls.domains[0].main: "{{ server_domain }}"
       traefik.http.routers.netdata.tls.domains[0].sans: "*.{{ server_domain }}"
-      traefik.http.routers.netdata.middlewares: "{{ netdata_middleware_chain }}"
+
       traefik.http.services.netdata.loadbalancer.server.port: "19999"

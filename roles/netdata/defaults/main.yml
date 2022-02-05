@@ -2,10 +2,13 @@
 netdata_enabled: false
 netdata_available_externally: "false"
 
+# Directories
+netdata_volume: "{{ docker_volume }}/netdata" # tank/docker/netdata
+netdata_mountpoint: "{{ docker_mountpoint }}/netdata" # /data/docker/netdata
+
 # network
 netdata_hostname: "netdata"
 netdata_port: "19999"
 
 # specs
 netdata_memory: 1g
-netdata_middleware_chain: "chain-no-auth@file"
