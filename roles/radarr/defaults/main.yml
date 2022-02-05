@@ -5,7 +5,10 @@ radarr_available_externally: "false"
 # directories
 radarr_movies_directory: "{{ movies_root }}"
 radarr_download_directory: "{{ downloads_root }}"
-radarr_data_directory: "{{ docker_home }}/radarr"
+# radarr_data_directory: "{{ docker_home }}/radarr"
+
+radarr_volume: "{{ docker_volume }}/radarr" # tank/docker/radarr
+radarr_mountpoint: "{{ docker_mountpoint }}/radarr" # /data/docker/radarr
 
 # uid / gid
 radarr_user_id: "0"
@@ -17,4 +20,3 @@ radarr_hostname: "radarr"
 
 # specs
 radarr_memory: 1g
-radarr_middleware_chain: "chain-no-auth@file"

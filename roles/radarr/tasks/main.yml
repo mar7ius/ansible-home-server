@@ -1,10 +1,17 @@
 ---
-- name: Create Radarr Directories
-  file:
-    path: "{{ item }}"
-    state: directory
-  with_items:
-    - "{{ radarr_data_directory }}"
+# - name: Create Radarr Directories
+#   file:
+#     path: "{{ item }}"
+#     state: directory
+#   with_items:
+#     - "{{ radarr_data_directory }}"
+
+- name: Create filesystem for Radarr
+  community.general.zfs:
+    name: "{{ radarr_volume }}"
+    state: present
+    extra_zfs_properties:
+      mountpoint: "{{ radarr_mountpoint }}"
 
 - name: Radarr
   docker_container:
@@ -15,7 +22,7 @@
     volumes:
       - "{{ radarr_movies_directory }}:/movies:rw"
       - "{{ radarr_download_directory }}:/downloads:rw"
-      - "{{ radarr_data_directory }}:/config:rw"
+      - "{{ radarr_mountpoint }}:/config:rw"
     ports:
       - "{{ radarr_port }}:7878"
     env:
@@ -27,6 +34,7 @@
     labels:
       traefik.enable: "{{ radarr_available_externally }}"
       traefik.http.routers.radarr.rule: "Host(`{{ radarr_hostname }}.{{ server_domain }}`)"
+      traefik.http.routers.radarr.entrypoints: "websecure"
       traefik.http.routers.radarr.middlewares: "authelia@docker"
 
       traefik.http.routers.radarr.tls.certresolver: "letsencrypt"
