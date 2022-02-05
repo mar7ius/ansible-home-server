@@ -1,12 +1,16 @@
 ---
 - hosts: all
-  any_errors_fatal: true
+  # any_errors_fatal: true
 
   pre_tasks:
     - import_tasks: tasks/users.yml
       tags: users
 
   roles:
+    - role: zfs
+      tags:
+        - zfs
+      when: ( zfs_enable | default(False))
     ## Requirements:
     - role: geerlingguy.docker
       tags:
@@ -17,10 +21,6 @@
         - initial_setup
       when: ( initial_setup_enable | default(False))
 
-    - role: zfs
-      tags:
-        - zfs
-      when: ( zfs_enable | default(False))
 
     - role: samba
       tags:
@@ -32,6 +32,27 @@
       tags:
         - docker
       when: ( docker_enable | default(False))
+
+    - role: docker_custom_network
+      tags:
+        - docker_custom_network
+      when: ( docker_enable | default(False))
+
+    ## Networking/proxiying:
+    - role: authelia
+      tags:
+        - authelia
+      when: ( authelia_enable | default(False))
+
+    - role: cloudflare_ddns
+      tags:
+        - cloudflare_ddns
+      when: ( cloudflare_ddns_enable | default(False))
+
+    - role: traefik
+      tags:
+        - traefik
+      when: ( traefik_enable | default(False))
 
     ## Containers administration
     - role: portainer
@@ -78,23 +99,6 @@
       tags:
         - jellyfin
       when: ( jellyfin_enable | default(False))
-
-    ## Networking/proxiying:
-    - role: authelia
-      tags:
-        - authelia
-      when: ( authelia_enable | default(False))
-
-    - role: cloudflare_ddns
-      tags:
-        - cloudflare_ddns
-      when: ( cloudflare_ddns_enable | default(False))
-
-    - role: traefik
-      tags:
-        - traefik
-      when: ( traefik_enable | default(False))
-
 
     ## Monitoring:
     - role: netdata
