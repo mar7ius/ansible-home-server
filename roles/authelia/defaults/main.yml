@@ -14,7 +14,9 @@ storage_encryption_key: "7Vp8LW2QV9dtW62bC2yeFvu2Tdhgc7"
 
 
 
-authelia_config_directory: "{{ docker_home }}/authelia"
+# authelia_config_directory: "{{ docker_home }}/authelia"
+authelia_volume: "{{ docker_volume }}/authelia" # tank/docker/authelia
+authelia_mountpoint: "{{ docker_mountpoint }}/authelia" # /data/docker/authelia
 
 authelia_admin_user:
   {

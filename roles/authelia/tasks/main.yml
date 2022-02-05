@@ -1,27 +1,36 @@
 ---
-- name: Create Authelia Directories
-  file:
-    path: "{{ item }}"
-    state: directory
-    # mode: 0755
-  with_items:
-    - "{{ authelia_config_directory }}"
+- name: Create filesystem for Authelia
+  community.general.zfs:
+    name: "{{ authelia_volume }}"
+    state: present
+    extra_zfs_properties:
+      mountpoint: "{{ authelia_mountpoint }}"
+      # atime: off
+      # compression: off
+
+# - name: Create Authelia Directories
+#   file:
+#     path: "{{ item }}"
+#     state: directory
+#     # mode: 0755
+#   with_items:
+#     - "{{ authelia_mountpoint }}"
 
 - name: Authelia Notification file
   file:
-    path: "{{ authelia_config_directory }}/notification.txt"
+    path: "{{ authelia_mountpoint }}/notification.txt"
     state: touch
 
 - name: Template Authelia configuration.yml
   template:
     src: configuration.yml
-    dest: "{{ authelia_config_directory }}/configuration.yml"
+    dest: "{{ authelia_mountpoint }}/configuration.yml"
   register: authelia_config
 
 - name: Authelia user_database
   template:
     src: users_database.yml
-    dest: "{{ authelia_config_directory }}/users_database.yml"
+    dest: "{{ authelia_mountpoint }}/users_database.yml"
 
   # Authelia (Lite) - Self-Hosted Single Sign-On and Two-Factor Authentication
 - name: Authelia Docker Container
@@ -30,8 +39,14 @@
     image: authelia/authelia:4.33
     pull: true
     hostname: authelia
+    networks:
+      - name: "{{ custom_network_name }}"
+        aliases:
+          - authelia
+    network_mode: "{{ custom_network_name }}"
+    networks_cli_compatible: yes
     volumes:
-      - "{{ authelia_config_directory }}:/config:rw"
+      - "{{ authelia_mountpoint }}:/config:rw"
     ports:
       - "{{ authelia_port }}:9091"
     env:
