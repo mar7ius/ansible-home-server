@@ -15,14 +15,12 @@
     create_home: no
     group: heimdall
 
-- name: Create Heimdall Directories
-  file:
-    path: "{{ item }}"
-    state: directory
-    owner: heimdall
-    group: heimdall
-  with_items:
-    - "{{ heimdall_data_directory }}"
+- name: Create filesystem for Heimdall
+  community.general.zfs:
+    name: "{{ heimdall_volume }}"
+    state: present
+    extra_zfs_properties:
+      mountpoint: "{{ heimdall_mountpoint }}"
 
 - name: Create Heimdall container
   docker_container:
@@ -30,8 +28,14 @@
     image: "{{ heimdall_docker_image }}"
     pull: true
     hostname: heimdall
+    networks:
+      - name: "{{ custom_network_name }}"
+        aliases:
+          - heimdall
+    network_mode: "{{ custom_network_name }}"
+    networks_cli_compatible: yes
     volumes:
-      - "{{ heimdall_data_directory }}:/config:rw"
+      - "{{ heimdall_mountpoint }}:/config:rw"
     env:
       PUID: "{{ heimdall_user_id }}"
       PGID: "{{ heimdall_group_id }}"
@@ -51,4 +55,4 @@
       traefik.http.routers.heimdall.tls.domains[0].main: "{{ server_domain }}"
       traefik.http.routers.heimdall.tls.domains[0].sans: "*.{{ server_domain }}"
 
-      traefik.http.services.heimdall.loadbalancer.server.port: "10443"
+      traefik.http.services.heimdall.loadbalancer.server.port: "80"

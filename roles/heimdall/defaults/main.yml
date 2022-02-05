@@ -4,7 +4,9 @@ heimdall_available_externally: "false"
 
 # directories
 heimdall_docker_image: linuxserver/heimdall:latest
-heimdall_data_directory: "{{ docker_home }}/heimdall"
+# heimdall_data_directory: "{{ docker_home }}/heimdall"
+heimdall_volume: "{{ docker_volume }}/heimdall" # tank/docker/heimdall
+heimdall_mountpoint: "{{ docker_mountpoint }}/heimdall" # /data/docker/heimdall
 
 # network
 heimdall_port_http: "10080"
