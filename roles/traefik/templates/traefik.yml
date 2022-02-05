@@ -32,7 +32,7 @@ api:
 
 providers:
   docker:
-    # network: traefik_network
+    # network: "{{ custom_network_name }}"
     exposedByDefault: false
 
 certificatesResolvers:

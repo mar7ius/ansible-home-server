@@ -3,7 +3,8 @@
 traefik_enabled: false
 
 # directories
-traefik_data_directory: "{{ docker_home }}/traefik"
+traefik_volume: "{{ docker_volume }}/traefik" # tank/docker/traefik
+traefik_mountpoint: "{{ docker_mountpoint }}/traefik" # /data/docker/traefik
 
 # network
 traefik_port_http: "80"

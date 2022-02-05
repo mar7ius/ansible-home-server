@@ -1,30 +1,21 @@
 ---
-- name: Create Traefik Directories
+- name: Create Filesystem for Docker
+  community.general.zfs:
+    name: "{{ traefik_volume }}"
+    state: present
+    extra_zfs_properties:
+      mountpoint: "{{ traefik_mountpoint }}"
+
+- name: Create Letsencrypt Directory
   file:
-    path: "{{ item }}"
+    path: "{{ traefik_mountpoint }}/letsencrypt"
     state: directory
-  with_items:
-    - "{{ traefik_data_directory }}"
-    - "{{ traefik_data_directory }}/letsencrypt"
-    - "{{ traefik_data_directory }}/custom-rules"
 
 - name: Template Traefik config.yml
   template:
     src: traefik.yml
-    dest: "{{ traefik_data_directory }}/traefik.yml"
+    dest: "{{ traefik_mountpoint }}/traefik.yml"
   register: template_config
-
-# - name: Template Traefik middleware
-#   template:
-#     src: middlewares.yml
-#     dest: "{{ traefik_data_directory }}/custom-rules/middlewares.yml"
-#   register: middleware_config
-
-# - name: Template Traefik middleware-chains
-#   template:
-#     src: middlewares-chains.yml
-#     dest: "{{ traefik_data_directory }}/custom-rules/middlewares-chains.yml"
-#   register: middleware_chains_config
 
 - name: Traefik Docker Container
   docker_container:
@@ -32,14 +23,20 @@
     image: "{{ traefik_docker_image }}"
     pull: true
     hostname: traefik
+    networks:
+      - name: "{{ custom_network_name }}"
+        aliases:
+          - traefik
+    network_mode: "{{ custom_network_name }}"
+    networks_cli_compatible: yes
     ports:
       - "{{ traefik_port_http }}:80"
       - "{{ traefik_port_https }}:443"
       - "{{ traefik_port_ui }}:8083"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "{{ traefik_data_directory }}/letsencrypt:/letsencrypt:rw"
-      - "{{ traefik_data_directory }}/traefik.yml:/etc/traefik/traefik.yml:ro"
+      - "{{ traefik_mountpoint }}/letsencrypt:/letsencrypt:rw"
+      - "{{ traefik_mountpoint }}/traefik.yml:/etc/traefik/traefik.yml:ro"
     labels:
       traefik.enable: "true"
       traefik.http.routers.traefik.rule: "Host(`traefik.{{ server_domain }}`)"
