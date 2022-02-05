@@ -3,7 +3,9 @@ portainer_enabled: false
 portainer_available_externally: "false"
 
 # directories
-portainer_data_directory: "{{ docker_home }}/portainer/config"
+portainer_volume: "{{ docker_volume }}/portainer" # tank/docker/portainer
+portainer_mountpoint: "{{ docker_mountpoint }}/portainer" # /data/docker/portainer
+portainer_data_directory: "{{ portainer_mountpoint }}/config"
 
 # network
 portainer_port: "9000"
@@ -11,4 +13,3 @@ portainer_hostname: "portainer"
 
 # specs
 portainer_memory: 1g
-portainer_middleware_chain: "chain-no-auth@file"

@@ -1,4 +1,13 @@
 ---
+- name: Create filesystem for Portainer
+  community.general.zfs:
+    name: "{{ portainer_volume }}"
+    state: present
+    extra_zfs_properties:
+      mountpoint: "{{ portainer_mountpoint }}"
+      atime: off
+      compression: off
+
 - name: Create Portainer Directories
   file:
     path: "{{ item }}"
@@ -16,6 +25,12 @@
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "/etc/timezone:/etc/timezone:ro"
     hostname: portainer
+    networks:
+      - name: "{{ custom_network_name }}"
+        aliases:
+          - portainer
+    network_mode: "{{ custom_network_name }}"
+    networks_cli_compatible: yes
     ports:
       - "{{ portainer_port }}:9000"
     restart_policy: unless-stopped
