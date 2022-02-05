@@ -1,4 +1,11 @@
 ---
+- name: Create filesystem for Qbittorrent
+  community.general.zfs:
+    name: "{{ qbittorrent_volume }}"
+    state: present
+    extra_zfs_properties:
+      mountpoint: "{{ qbittorrent_mountpoint }}"
+
 - name: Create Qbittorrent Directories
   file:
     path: "{{ item }}"
@@ -21,6 +28,12 @@
       - "{{ qbittorrent_port }}:8585"
       # - "6881:6881"
     hostname: qbittorrent
+    networks:
+      - name: "{{ custom_network_name }}"
+        aliases:
+          - qbittorrent
+    network_mode: "{{ custom_network_name }}"
+    networks_cli_compatible: yes
     env:
       TZ: "{{ qbittorrent_timezone }}"
       PUID: "{{ qbittorrent_user_id }}"
