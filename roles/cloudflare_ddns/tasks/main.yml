@@ -1,18 +1,17 @@
 ---
-- name: Check for deprecated API key
-  fail:
-    msg: "Using a Cloudflare global API key is no longer supported. Please unset cloudflare_api_key and set cloudflare_token"
-  when: cloudflare_api_key is defined
-
-- name: Create cloudflare Dynamic DNS Directories
-  file:
-    path: "{{ cloudflare_data_directory }}"
-    state: directory
+- name: Create filesystem for Cloudflare DDNS
+  community.general.zfs:
+    name: "{{ cloudflare_volume }}"
+    state: present
+    extra_zfs_properties:
+      mountpoint: "{{ cloudflare_mountpoint }}"
+      # atime: off
+      # compression: off
 
 - name: Template Cloudflare Dynamic DNS config.yml with scoped token
   template:
     src: config.yml
-    dest: "{{ cloudflare_data_directory }}/config.yml"
+    dest: "{{ cloudflare_mountpoint }}/config.yml"
   register: template_files_result
 
 
@@ -21,8 +20,15 @@
     name: cloudflare-ddns
     image: joshava/cloudflare-ddns:latest
     pull: true
+    hostname: cloudflare-ddns
+    networks:
+      - name: "{{ custom_network_name }}"
+        aliases:
+          - cloudflare-ddns
+    network_mode: "{{ custom_network_name }}"
+    networks_cli_compatible: yes
     volumes:
-      - "{{ cloudflare_data_directory }}/config.yml:/app/config.yaml"
+      - "{{ cloudflare_mountpoint }}/config.yml:/app/config.yaml"
     restart_policy: unless-stopped
     memory: "{{ cloudflare_memory }}"
     recreate: "{{ template_files_result is changed }}"
