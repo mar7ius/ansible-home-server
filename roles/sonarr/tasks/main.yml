@@ -1,10 +1,17 @@
 ---
-- name: Create Sonarr Directories
-  file:
-    path: "{{ item }}"
-    state: directory
-  with_items:
-    - "{{ sonarr_data_directory }}"
+# - name: Create Sonarr Directories
+#   file:
+#     path: "{{ item }}"
+#     state: directory
+#   with_items:
+#     - "{{ sonarr_data_directory }}"
+
+- name: Create filesystem for Sonarr
+  community.general.zfs:
+    name: "{{ sonarr_volume }}"
+    state: present
+    extra_zfs_properties:
+      mountpoint: "{{ sonarr_mountpoint }}"
 
 - name: Sonarr
   docker_container:
@@ -12,10 +19,16 @@
     image: linuxserver/sonarr
     pull: true
     hostname: sonarr
+    networks:
+      - name: "{{ custom_network_name }}"
+        aliases:
+          - sonarr
+    network_mode: "{{ custom_network_name }}"
+    networks_cli_compatible: yes
     volumes:
       - "{{ sonarr_tv_directory }}:/tvshows:rw"
       - "{{ sonarr_download_directory }}:/downloads:rw"
-      - "{{ sonarr_data_directory }}:/config:rw"
+      - "{{ sonarr_mountpoint }}:/config:rw"
     ports:
       - "{{ sonarr_port }}:8989"
     env:
@@ -27,6 +40,7 @@
     labels:
       traefik.enable: "{{ sonarr_available_externally }}"
       traefik.http.routers.sonarr.rule: "Host(`{{ sonarr_hostname }}.{{ server_domain }}`)"
+      traefik.http.routers.sonarr.entrypoints: "websecure"
       traefik.http.routers.sonarr.middlewares: "authelia@docker"
 
       traefik.http.routers.sonarr.tls.certresolver: "letsencrypt"
