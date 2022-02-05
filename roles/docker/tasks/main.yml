@@ -26,6 +26,12 @@
     mode: 0775
     state: directory
 
+- name: Create Docker home directory
+  file:
+    path: "{{ docker_mountpoint }}/data"
+    mode: 0775
+    state: directory
+
 - name: Add user account to Docker group
   user:
     name: "{{ admin_user }}"

@@ -8,4 +8,5 @@ docker_home: /tank/docker
 docker_image_directory: "{{ docker_home }}/data"
 
 # Docker storage driver https://docs.docker.com/storage/storagedriver/select-storage-driver/#supported-backing-filesystems
-docker_storage_driver: zfs
+docker_storage_driver: aufs
+# docker_storage_driver: zfs
