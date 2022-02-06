@@ -1,8 +1,5 @@
 authelia_secret: "SECRET_KEY_HERE"
 
-# authelia_sub_domain: "authelia"
-# server_domain: "example.com"
-
 duo_api_hostname: "DUO_HOSTNAME_HERE"
 duo_api_integration_key: "INTEGRATION_KEY_HERE"
 duo_api_secret_key: "SECRET_KEY_HERE"
@@ -12,9 +9,7 @@ session_authelia_secret: "SESSION_SECRET_KEY_HERE"
 # storage_encryption_key: "STORAGE_ENCRYPTION_KEY_HERE"
 storage_encryption_key: "7Vp8LW2QV9dtW62bC2yeFvu2Tdhgc7"
 
-
-
-# authelia_config_directory: "{{ docker_home }}/authelia"
+# filesystem :
 authelia_volume: "{{ docker_volume }}/authelia" # tank/docker/authelia
 authelia_mountpoint: "{{ docker_mountpoint }}/authelia" # /data/docker/authelia
 

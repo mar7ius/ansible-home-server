@@ -1,11 +1,4 @@
 ---
-# - name: Create Radarr Directories
-#   file:
-#     path: "{{ item }}"
-#     state: directory
-#   with_items:
-#     - "{{ radarr_data_directory }}"
-
 - name: Create filesystem for Radarr
   community.general.zfs:
     name: "{{ radarr_volume }}"

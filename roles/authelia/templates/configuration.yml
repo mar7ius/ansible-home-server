@@ -2,9 +2,6 @@
 #                   Authelia configuration                    #
 ###############################################################
 
-# host: 0.0.0.0
-# port: 9091
-# log_level: "{{ authelia_log_level }}"
 server:
   host: 0.0.0.0
   port: 9091
@@ -19,10 +16,10 @@ jwt_secret: "{{ authelia_secret }}" # comment to use docker secret file instead 
 # https://docs.authelia.com/configuration/miscellaneous.html#default-redirection-url
 default_redirection_url: "{{ authelia_redirection_url }}"
 
-totp:
-  issuer: authelia.com
-  period: 30
-  skew: 1
+# totp:
+#   issuer: authelia.com
+#   period: 30
+#   skew: 1
 
 ntp:
   address: "time.cloudflare.com:123"

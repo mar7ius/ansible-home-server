@@ -1,11 +1,4 @@
 ---
-# - name: Create Sonarr Directories
-#   file:
-#     path: "{{ item }}"
-#     state: directory
-#   with_items:
-#     - "{{ sonarr_data_directory }}"
-
 - name: Create filesystem for Sonarr
   community.general.zfs:
     name: "{{ sonarr_volume }}"

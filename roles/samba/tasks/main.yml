@@ -49,5 +49,3 @@
     group: "{{ samba_shares_group }}"
     mode: "0775"
     recurse: yes
-  # notify:
-  #   - Restart Samba services # Handler

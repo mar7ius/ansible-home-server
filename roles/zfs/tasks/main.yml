@@ -54,8 +54,6 @@
     state: present
     extra_zfs_properties:
       mountpoint: '{{ docker_mountpoint }}'
-      # atime: off
-      # compression: off
 
 - name: Create Filesystem docker data
   community.general.zfs:
@@ -63,8 +61,6 @@
     state: present
     extra_zfs_properties:
       mountpoint: "{{ docker_mountpoint }}/data"
-      # atime: off
-      # compression: off
 
 # Secondary pool and filesystems:
 

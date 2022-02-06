@@ -1,10 +1,4 @@
 ---
-# - name: Create NZBget Directories
-#   file:
-#     path: "{{ item }}"
-#     state: directory
-#   with_items:
-#     - "{{ nzbget_data_directory }}"
 - name: Create filesystem for NZBget
   community.general.zfs:
     name: "{{ nzbget_volume }}"

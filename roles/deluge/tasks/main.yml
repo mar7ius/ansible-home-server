@@ -31,5 +31,5 @@
       traefik.http.routers.deluge.tls.certresolver: "letsencrypt"
       traefik.http.routers.deluge.tls.domains[0].main: "{{ server_domain }}"
       traefik.http.routers.deluge.tls.domains[0].sans: "*.{{ server_domain }}"
-      traefik.http.routers.deluge.middlewares: "{{ deluge_middleware_chain }}"
+
       traefik.http.services.deluge.loadbalancer.server.port: "8112"

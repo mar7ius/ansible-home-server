@@ -5,8 +5,6 @@
     state: present
     extra_zfs_properties:
       mountpoint: "{{ cloudflare_mountpoint }}"
-      # atime: off
-      # compression: off
 
 - name: Template Cloudflare Dynamic DNS config.yml with scoped token
   template:

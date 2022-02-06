@@ -1,9 +1,3 @@
-# zfs_tank:
-#   - name: tank
-#   - ashift: 12
-#   - disk1: '/dev/disk/by-id/scsi-123abc'
-#   - disk2: '/dev/disk/by-id/scsi-456def'
-
 zfs_main_name: tank
 zfs_main_ashift: 12
 zfs_main_disk1: '/dev/disk/by-id/scsi-123abc'
@@ -12,15 +6,6 @@ zfs_main_disk2: '/dev/disk/by-id/scsi-456def'
 zfs_secondary_name: dozer
 zfs_secondary_ashift: 9
 zfs_secondary_disk1: '/dev/disk/by-id/scsi-789ghi'
-
-# zfs_pools:
-#   - name: tank
-#     ashift: 12
-#     disk1: '/dev/disk/by-id/scsi-123abc'
-#     disk2: '/dev/disk/by-id/scsi-456def'
-#   - name: dozer
-#     ashift: 9
-#     disk1: '/dev/disk/by-id/scsi-789ghi'
 
 zfs_mountpoint_root: /data
 ## Tank:
