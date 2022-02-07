@@ -10,7 +10,7 @@ cloudflare_mountpoint: "{{ docker_mountpoint }}/cloudflare_ddns" # /data/docker/
 cloudflare_zone: "{{ server_domain }}"
 
 # The hostname you want the container to update. You shouldn't need to change this.
-cloudflare_host: "*.{{ cloudflare_zone }}"
+cloudflare_host: "{{ cloudflare_zone }}"
 
 # Cloudflare scoped token (https://github.com/joshuaavalon/docker-cloudflare#api-token)
 # Make sure token permissions include #DNS:Edit and #Zone:Read
@@ -19,10 +19,10 @@ cloudflare_token: "abcdabcdabcd123412341234"
 # Set to true to make traffic go through the CloudFlare CDN.
 # Note that if the cloudflare host is a wildcard (the default), this must be false, as cloudflare
 # does not support http proxy of wildcard CNAMEs.
-cloudflare_proxy: false
+cloudflare_proxy: true
 
 # Set to AAAA to use set IPv6 records instead of IPv4 records.
 cloudflare_type: "A"
 
 # specs
-cloudflare_memory: 512MB
+cloudflare_memory: 256MB

@@ -1,0 +1,35 @@
+---
+- name: Create filesystem for Cloudflare Companion
+  community.general.zfs:
+    name: "{{ cloudflare_cpn_volume }}"
+    state: present
+    extra_zfs_properties:
+      mountpoint: "{{ cloudflare_cpn_mountpoint }}"
+
+
+- name: Cloudflare Companion Container
+  docker_container:
+    name: cloudflare-companion
+    image: tiredofit/traefik-cloudflare-companion:latest
+    pull: true
+    hostname: cloudflare-companion
+    networks:
+      - name: "{{ custom_network_name }}"
+        aliases:
+          - cloudflare-companion
+    network_mode: "{{ custom_network_name }}"
+    networks_cli_compatible: yes
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    env:
+      TIMEZONE: "{{ server_timezone }}"
+      TRAEFIK_VERSION: "2"
+      CF_EMAIL: "{{ cloudflare_email }}"
+      CF_TOKEN: "{{ cloudflare_api_key }}"
+      TARGET_DOMAIN: "{{ server_domain }}"
+      DOMAIN1: "{{ server_domain }}"
+      DOMAIN1_ZONE_ID: "{{ cloudflare_zone_id }}"
+      DOMAIN1_PROXIED: "true"
+    restart_policy: unless-stopped
+    memory: "{{ cloudflare_memory }}"
+    recreate: "{{ template_files_result is changed }}"
