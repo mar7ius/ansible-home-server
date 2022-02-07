@@ -1,1 +1,6 @@
 **/.DS_Store
+tests/inventories/integration_testing/group_vars/test.yml
+inventories/hosts/group_vars/vars.yml
+tasks/users.yml
+tests/test-vagrant.sh
+.gitignore
