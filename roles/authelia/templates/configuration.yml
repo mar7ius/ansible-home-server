@@ -2,12 +2,15 @@
 #                   Authelia configuration                    #
 ###############################################################
 
+theme: dark
+
 server:
   host: 0.0.0.0
   port: 9091
 
 log:
   level: "{{ authelia_log_level }}"
+
 
 # This secret can also be set using the env variables AUTHELIA_JWT_SECRET_FILE
 # site to generate the secret: https://www.grc.com/passwords.htm
@@ -55,28 +58,21 @@ access_control:
     # Rules applied to everyone
     - domain: "login.{{ server_domain }}"
       policy: bypass
-    - domain: "jellyfin.{{ server_domain }}"
+    - domain: "{{jellyfin_hostname}}.{{ server_domain }}"
       policy: bypass
     - domain:
-        - heimdall.{{server_domain}}
-        - traefik.{{server_domain}}
-        - portainer.{{server_domain}}
-        - qbittorrent.{{server_domain}}
-        - nzbget.{{server_domain}}
-        - sonarr.{{server_domain}}
-        - radarr.{{server_domain}}
-        - netdata.{{server_domain}}
+        - "{{heimdall_hostname}}.{{server_domain}}"
+        - "{{traefik_hostname}}.{{server_domain}}"
+        - "{{portainer_hostname}}.{{server_domain}}"
+        - "{{qbittorrent_hostname}}.{{server_domain}}"
+        - "{{nzbget_hostname}}.{{server_domain}}"
+        - "{{sonarr_hostname}}.{{server_domain}}"
+        - "{{radarr_hostname}}.{{server_domain}}"
+        - "{{netdata_hostname}}.{{server_domain}}"
       policy: two_factor
       subject:
         - "user:{{ authelia_admin_user.name }}"
         - "group:ananas"
-      #   networks:
-      #     - 192.168.1.0/24
-      # - domain: "{{server_domain}}"
-      #   policy: two_factor
-      #   subject: "group:ananas"
-      #   networks:
-      #     - 192.168.1.0/24
 
 session:
   name: authelia_session
@@ -97,7 +93,7 @@ session:
 regulation:
   max_retries: 3
   find_time: 120
-  ban_time: 300
+  ban_time: 1800
 
   # For local storage, uncomment lines below and comment out mysql. https://docs.authelia.com/configuration/storage/sqlite.html
 storage:

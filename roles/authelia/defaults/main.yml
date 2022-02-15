@@ -6,8 +6,7 @@ duo_api_secret_key: "SECRET_KEY_HERE"
 
 session_authelia_secret: "SESSION_SECRET_KEY_HERE"
 
-# storage_encryption_key: "STORAGE_ENCRYPTION_KEY_HERE"
-storage_encryption_key: "7Vp8LW2QV9dtW62bC2yeFvu2Tdhgc7"
+storage_encryption_key: "STORAGE_ENCRYPTION_KEY_HERE"
 
 # filesystem :
 authelia_volume: "{{ docker_volume }}/authelia" # tank/docker/authelia

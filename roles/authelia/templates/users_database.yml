@@ -1,5 +1,5 @@
 users:
-  {{ authelia_admin_user.name }}:
+  martial:
     displayname: "{{ authelia_admin_user.displayname }}"
     password: "{{ authelia_admin_user.hashed_password }}"
     email: "{{ authelia_admin_user.email }}"
@@ -7,9 +7,9 @@ users:
       - admins
       - ananas
 
-  # {{ authelia_user.name }}:
-  #   displayname: "{{ authelia_user.displayname }}"
-  #   password: "{{ authelia_user.hashed_password }}"
-  #   email: "{{ authelia_user.email }}"
-  #   groups:
-  #     - ananas
+  ananas:
+    displayname: "{{ authelia_user.displayname }}"
+    password: "{{ authelia_user.hashed_password }}"
+    email: "{{ authelia_user.email }}"
+    groups:
+      - ananas
