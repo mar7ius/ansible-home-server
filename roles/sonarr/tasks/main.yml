@@ -34,10 +34,8 @@
       traefik.enable: "{{ sonarr_available_externally }}"
       traefik.http.routers.sonarr.rule: "Host(`{{ sonarr_hostname }}.{{ server_domain }}`)"
       traefik.http.routers.sonarr.entrypoints: "websecure"
-      traefik.http.routers.sonarr.middlewares: "authelia@docker"
-
-      traefik.http.routers.sonarr.tls.certresolver: "letsencrypt"
-      traefik.http.routers.sonarr.tls.domains[0].main: "{{ server_domain }}"
-      traefik.http.routers.sonarr.tls.domains[0].sans: "*.{{ server_domain }}"
-
-      traefik.http.services.sonarr.loadbalancer.server.port: "8989"
+      traefik.http.routers.sonarr.tls.certresolver: "cloudflare"
+      traefik.http.routers.sonarr.tls.domains[0].main: "*.{{ server_domain }}"
+      traefik.http.routers.sonarr.tls.domains[0].sans: "{{ server_domain }}"
+      traefik.http.routers.sonarr.middlewares: "chain-authelia@file"
+      traefik.http.services.sonarr.loadbalancer.server.port: "{{ sonarr_port }}"
