@@ -1,2 +1,2 @@
-[ubuntu]
+[ananas]
 192.168.1.15:7745 ansible_user=martial
