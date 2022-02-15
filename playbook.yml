@@ -1,5 +1,6 @@
 ---
 - hosts: all
+  become: true
   # any_errors_fatal: true
 
   pre_tasks:
@@ -49,6 +50,11 @@
         - cloudflare_ddns
       when: ( cloudflare_ddns_enable | default(False))
 
+    - role: cloudflare_companion
+      tags:
+        - cloudflare_companion
+      when: ( cloudflare_ddns_enable | default(False))
+
     - role: traefik
       tags:
         - traefik
@@ -70,12 +76,6 @@
       tags:
         - heimdall
       when: ( heimdall_enable | default(False))
-
-    ## Media management apps:
-    - role: deluge
-      tags:
-        - deluge
-      when: ( deluge_enable | default(False))
 
     - role: qbittorrent
       tags:
