@@ -8,5 +8,6 @@ docker_home: /tank/docker
 docker_image_directory: "{{ docker_home }}/data"
 
 # Docker storage driver https://docs.docker.com/storage/storagedriver/select-storage-driver/#supported-backing-filesystems
+# aufs over zfs driver, as it allow me to bind each container to a separate zfs dataset and monitor them using zfs list ( print the container's name instead of random chars)
 docker_storage_driver: aufs
 # docker_storage_driver: zfs
