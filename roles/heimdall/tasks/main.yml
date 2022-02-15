@@ -49,10 +49,10 @@
       traefik.enable: "{{ heimdall_available_externally }}"
       traefik.http.routers.heimdall.rule: "Host(`{{ heimdall_hostname }}.{{ server_domain }}`)"
       traefik.http.routers.heimdall.entrypoints: "websecure"
-      traefik.http.routers.heimdall.middlewares: "authelia@docker"
+      traefik.http.routers.heimdall.middlewares: "chain-authelia@file"
 
-      traefik.http.routers.heimdall.tls.certresolver: "letsencrypt"
-      traefik.http.routers.heimdall.tls.domains[0].main: "{{ server_domain }}"
-      traefik.http.routers.heimdall.tls.domains[0].sans: "*.{{ server_domain }}"
+      traefik.http.routers.heimdall.tls.certresolver: "cloudflare"
+      traefik.http.routers.heimdall.tls.domains[0].main: "*.{{ server_domain }}"
+      traefik.http.routers.heimdall.tls.domains[0].sans: "{{ server_domain }}"
 
       traefik.http.services.heimdall.loadbalancer.server.port: "80"
