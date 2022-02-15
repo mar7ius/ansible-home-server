@@ -33,10 +33,8 @@
       traefik.enable: "{{ nzbget_available_externally }}"
       traefik.http.routers.nzbget.rule: "Host(`{{ nzbget_hostname }}.{{ server_domain }}`)"
       traefik.http.routers.nzbget.entrypoints: "websecure"
-      traefik.http.routers.nzbget.middlewares: "authelia@docker"
-
-      traefik.http.routers.nzbget.tls.certresolver: "letsencrypt"
-      traefik.http.routers.nzbget.tls.domains[0].main: "{{ server_domain }}"
-      traefik.http.routers.nzbget.tls.domains[0].sans: "*.{{ server_domain }}"
-
-      traefik.http.services.nzbget.loadbalancer.server.port: "6789"
+      traefik.http.routers.nzbget.tls.certresolver: "cloudflare"
+      traefik.http.routers.nzbget.tls.domains[0].main: "*.{{ server_domain }}"
+      traefik.http.routers.nzbget.tls.domains[0].sans: "{{ server_domain }}"
+      traefik.http.routers.nzbget.middlewares: "chain-authelia@file"
+      traefik.http.services.nzbget.loadbalancer.server.port: "{{ nzbget_port }}"
