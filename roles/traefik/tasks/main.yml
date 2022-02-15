@@ -6,16 +6,36 @@
     extra_zfs_properties:
       mountpoint: "{{ traefik_mountpoint }}"
 
-- name: Create Letsencrypt Directory
+- name: Create Rules Directory
   file:
-    path: "{{ traefik_mountpoint }}/letsencrypt"
+    path: "{{ traefik_mountpoint }}/rules"
     state: directory
 
-- name: Template Traefik config.yml
+- name: Create Certificates Directory
+  file:
+    path: "{{ traefik_mountpoint }}/certs"
+    state: directory
+
+- name: Template Traefik Static Configuration File
   template:
     src: traefik.yml
     dest: "{{ traefik_mountpoint }}/traefik.yml"
   register: template_config
+
+- name: Template Traefik Middlewares
+  template:
+    src: rules/middlewares.yml
+    dest: "{{ traefik_mountpoint }}/rules/middlewares.yml"
+
+- name: Template Traefik Chained Middlewares
+  template:
+    src: rules/middlewares-chains.yml
+    dest: "{{ traefik_mountpoint }}/rules/middlewares-chains.yml"
+
+# - name: Template Traefik TLS Options
+#   template:
+#     src: rules/tls-opts.yml
+#     dest: "{{ traefik_mountpoint }}/rules/tls-opts.yml"
 
 - name: Traefik Docker Container
   docker_container:
@@ -35,21 +55,21 @@
       - "{{ traefik_port_ui }}:8083"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "{{ traefik_mountpoint }}/letsencrypt:/letsencrypt:rw"
-      - "{{ traefik_mountpoint }}/traefik.yml:/etc/traefik/traefik.yml:ro"
+      - "{{ traefik_mountpoint }}/rules:/rules:rw" # Dynamic configuration
+      - "{{ traefik_mountpoint }}/certs:/certs:rw" # Cloudflare Origin Certs
+      - "{{ traefik_mountpoint }}/traefik.yml:/etc/traefik/traefik.yml:ro" # static config file
     labels:
       traefik.enable: "true"
-      traefik.http.routers.traefik.rule: "Host(`traefik.{{ server_domain }}`)"
-      traefik.http.routers.traefik.service: "api@internal"
+      traefik.http.routers.traefik.rule: "Host(`{{ traefik_hostname }}.{{ server_domain }}`)"
       traefik.http.routers.traefik.entrypoints: "websecure"
-      ## middlewares: ##
-      traefik.http.middlewares.authelia.forwardauth.address: "http://authelia:9091/api/verify?rd=https://{{authelia_hostname}}.{{ server_domain }}"
-      traefik.http.middlewares.authelia.forwardauth.trustForwardHeader: "true"
-      traefik.http.middlewares.authelia.forwardauth.authResponseHeaders: "Remote-User, Remote-Groups, Remote-Name, Remote-Email"
-      ## Certificates: ##
-      traefik.http.routers.traefik.tls.certresolver: "letsencrypt"
-      traefik.http.routers.traefik.tls.domains[0].main: "{{ server_domain }}"
-      traefik.http.routers.traefik.tls.domains[0].sans: "*.{{ server_domain }}"
+      traefik.http.routers.traefik.tls.certresolver: "cloudflare"
+      traefik.http.routers.traefik.tls.domains[0].main: "*.{{ server_domain }}"
+      traefik.http.routers.traefik.tls.domains[0].sans: "{{ server_domain }}"
+      traefik.http.routers.traefik.service: "api@internal"
+      traefik.http.routers.traefik.middlewares: "chain-authelia@file"
+      traefik.http.routers.redirect-https.rule: "hostregexp(`{host:.+}`)"
+      traefik.http.routers.redirect-https.entrypoints: "web"
+      traefik.http.routers.redirect-https.middlewares: "middlewares-https-redirectscheme@file"
     env: "{{ traefik_environment_variables }}"
     restart_policy: unless-stopped
     memory: "{{ traefik_memory }}"

@@ -5,41 +5,64 @@ global:
 log:
   level: "{{traefik_log_level}}"
 
-
 entryPoints:
   web:
     address: :80
-    http:
-      redirections:
-        entryPoint:
-          to: websecure
-          scheme: https
   websecure:
     address: :443
+    forwardedHeaders:
+      trustedIPs:
+        - "173.245.48.0/20"
+        - "103.21.244.0/22"
+        - "103.22.200.0/22"
+        - "103.31.4.0/22"
+        - "141.101.64.0/18"
+        - "108.162.192.0/18"
+        - "190.93.240.0/20"
+        - "188.114.96.0/20"
+        - "197.234.240.0/22"
+        - "198.41.128.0/17"
+        - "162.158.0.0/15"
+        - "104.16.0.0/13"
+        - "104.24.0.0/14"
+        - "172.64.0.0/13"
+        - "131.0.72.0/22"
     http:
       tls:
-        certResolver: letsencrypt
+        certResolver: cloudflare
         domains:
-          - main: "{{ server_domain }}"
+          - main: "*.{{ server_domain }}"
             sans:
-              - "*.{{ server_domain }}"
+              - "{{ server_domain }}"
+        # options: "tls-opts@file"
+
   traefik:
     address: :8083
 
 api:
-  # insecure: true
+  insecure: true
   dashboard: true
 
 providers:
   docker:
-    # network: "{{ custom_network_name }}"
+    endpoint: "unix:///var/run/docker.sock"
+    # endpoint: "tcp://socket-proxy:2375"
     exposedByDefault: false
+    network: "{{ custom_network_name }}"
+    swarmMode: false
+  file:
+    directory: "/rules"
+    watch: true
 
 certificatesResolvers:
-  letsencrypt:
+  cloudflare:
     acme:
       email: "{{server_email}}"
-      storage: "/letsencrypt/acme.json"
-      caServer: "{{ traefik_acme_server }}"
+      storage: "/certs/acme.json"
+      caServer: "{{ traefik_acme_server }}" # staging or prod
       dnsChallenge:
-        provider: "{{traefik_dns_provider}}"
+        provider: "cloudflare" # cloudflare
+        resolvers:
+          - "1.1.1.1:53"
+          - "1.0.0.1:53"
+        # delayBeforeCheck: 90
