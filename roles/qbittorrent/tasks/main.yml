@@ -10,7 +10,7 @@
   file:
     path: "{{ item }}"
     state: directory
-    # mode: 0755
+
   with_items:
     - "{{ qbittorrent_config_directory }}"
     - "{{ qbittorrent_download_directory }}"
@@ -23,10 +23,9 @@
     pull: true
     volumes:
       - "{{ qbittorrent_config_directory }}:/config:rw"
-      - "{{ qbittorrent_download_directory }}:/root/Downloads:rw"
+      - "{{ qbittorrent_download_directory }}:/downloads:rw"
     ports:
       - "{{ qbittorrent_port }}:8585"
-      # - "6881:6881"
     hostname: qbittorrent
     networks:
       - name: "{{ custom_network_name }}"
@@ -45,10 +44,8 @@
       traefik.enable: "{{ qbittorrent_available_externally }}"
       traefik.http.routers.qbittorrent.rule: "Host(`{{ qbittorrent_hostname }}.{{ server_domain }}`)"
       traefik.http.routers.qbittorrent.entrypoints: "websecure"
-      traefik.http.routers.qbittorrent.middlewares: "authelia@docker"
-
-      traefik.http.routers.qbittorrent.tls.certresolver: "letsencrypt"
-      traefik.http.routers.qbittorrent.tls.domains[0].main: "{{ server_domain }}"
-      traefik.http.routers.qbittorrent.tls.domains[0].sans: "*.{{ server_domain }}"
-
+      traefik.http.routers.qbittorrent.tls.certresolver: "cloudflare"
+      traefik.http.routers.qbittorrent.tls.domains[0].main: "*.{{ server_domain }}"
+      traefik.http.routers.qbittorrent.tls.domains[0].sans: "{{ server_domain }}"
+      traefik.http.routers.qbittorrent.middlewares: "chain-authelia@file"
       traefik.http.services.qbittorrent.loadbalancer.server.port: "{{ qbittorrent_port }}"
