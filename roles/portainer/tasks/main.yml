@@ -18,7 +18,7 @@
 - name: Portainer Docker Container
   docker_container:
     name: portainer
-    image: portainer/portainer-ce
+    image: portainer/portainer-ce:latest
     pull: true
     volumes:
       - "{{ portainer_data_directory }}:/data:rw"
@@ -39,10 +39,8 @@
       traefik.enable: "{{ portainer_available_externally }}"
       traefik.http.routers.portainer.rule: "Host(`{{ portainer_hostname }}.{{ server_domain }}`)"
       traefik.http.routers.portainer.entrypoints: "websecure"
-      traefik.http.routers.portainer.middlewares: "authelia@docker"
-
-      traefik.http.routers.portainer.tls.certresolver: "letsencrypt"
-      traefik.http.routers.portainer.tls.domains[0].main: "{{ server_domain }}"
-      traefik.http.routers.portainer.tls.domains[0].sans: "*.{{ server_domain }}"
-
+      traefik.http.routers.portainer.tls.certresolver: "cloudflare"
+      traefik.http.routers.portainer.tls.domains[0].main: "*.{{ server_domain }}"
+      traefik.http.routers.portainer.tls.domains[0].sans: "{{ server_domain }}"
+      traefik.http.routers.portainer.middlewares: "chain-authelia@file"
       traefik.http.services.portainer.loadbalancer.server.port: "9000"
