@@ -24,12 +24,10 @@
     env:
       TIMEZONE: "{{ server_timezone }}"
       TRAEFIK_VERSION: "2"
-      CF_EMAIL: "{{ cloudflare_email }}"
-      CF_TOKEN: "{{ cloudflare_api_key }}"
+      CF_TOKEN: "{{ cloudflare_token }}"
       TARGET_DOMAIN: "{{ server_domain }}"
       DOMAIN1: "{{ server_domain }}"
       DOMAIN1_ZONE_ID: "{{ cloudflare_zone_id }}"
       DOMAIN1_PROXIED: "true"
     restart_policy: unless-stopped
     memory: "{{ cloudflare_memory }}"
-    recreate: "{{ template_files_result is changed }}"
