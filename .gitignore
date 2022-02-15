@@ -5,3 +5,4 @@ tasks/users.yml
 tests/test-vagrant.sh
 tests/test.sh
 .gitignore
+.vscode/settings.json
