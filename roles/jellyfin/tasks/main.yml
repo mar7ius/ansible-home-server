@@ -13,11 +13,12 @@
   with_items:
     - "{{ jellyfin_config_directory }}"
     - "{{ jellyfin_transcode_directory }}"
+    - "{{ jellyfin_metadata_directory }}"
 
 - name: Jellyfin Docker Container
   docker_container:
     name: jellyfin
-    image: linuxserver/jellyfin
+    image: jellyfin/jellyfin:latest
     pull: true
     hostname: jellyfin
     networks:
@@ -28,27 +29,25 @@
     networks_cli_compatible: yes
     volumes:
       - "{{ jellyfin_config_directory }}:/config:rw"
+      - "{{ jellyfin_metadata_directory }}:/config/metadata:rw"
       - "{{ jellyfin_transcode_directory }}:/transcode:rw"
       - "{{ jellyfin_movies_directory }}:/movies:{{ jellyfin_movies_permissions }}"
       - "{{ jellyfin_spectacles_directory }}:/spectacles:{{ jellyfin_movies_permissions }}"
       - "{{ jellyfin_tv_directory }}:/tvshow:{{ jellyfin_tv_permissions }}"
     ports:
-      - "{{ jellyfin_port_http }}:8096"
-      - "{{ jellyfin_port_https }}:8920"
+      - "8096:8096"
     env:
       TZ: "{{ server_timezone }}"
       PUID: "{{ jellyfin_user_id }}"
       PGID: "{{ jellyfin_group_id }}"
     labels:
       traefik.enable: "{{ jellyfin_available_externally }}"
-      traefik.http.routers.jellyfin.rule: "Host(`jellyfin.{{ server_domain }}`)"
+      traefik.http.routers.jellyfin.rule: "Host(`{{ jellyfin_hostname }}.{{ server_domain }}`)"
       traefik.http.routers.jellyfin.entrypoints: "websecure"
-      traefik.http.routers.jellyfin.middlewares: "authelia@docker"
-
-      traefik.http.routers.jellyfin.tls.certresolver: "letsencrypt"
-      traefik.http.routers.jellyfin.tls.domains[0].main: "{{ server_domain }}"
-      traefik.http.routers.jellyfin.tls.domains[0].sans: "*.{{ server_domain }}"
-
+      traefik.http.routers.jellyfin.tls.certresolver: "cloudflare"
+      traefik.http.routers.jellyfin.tls.domains[0].main: "*.{{ server_domain }}"
+      traefik.http.routers.jellyfin.tls.domains[0].sans: "{{ server_domain }}"
+      traefik.http.routers.jellyfin.middlewares: "chain-authelia@file"
       traefik.http.services.jellyfin.loadbalancer.server.port: "8096"
     restart_policy: unless-stopped
     memory: 1g
