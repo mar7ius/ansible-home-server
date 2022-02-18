@@ -1,2 +1,2 @@
-cloudflare_cpn_volume: "{{ docker_volume }}/cloudflare_companion" # tank/docker/cloudflare_companion
+cloudflare_cpn_volume: "{{ docker_volume }}/cloudflare_companion" # dozer/docker/cloudflare_companion
 cloudflare_cpn_mountpoint: "{{ docker_mountpoint }}/cloudflare_companion" # /data/docker/cloudflare_companion

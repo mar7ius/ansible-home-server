@@ -4,7 +4,7 @@ nzbget_available_externally: "false"
 
 # directories
 
-nzbget_volume: "{{ docker_volume }}/nzbget" # tank/docker/nzbget
+nzbget_volume: "{{ docker_volume }}/nzbget" # dozer/docker/nzbget
 nzbget_mountpoint: "{{ docker_mountpoint }}/nzbget" # /data/docker/nzbget
 nzbget_download_directory: "{{ downloads_root }}"
 

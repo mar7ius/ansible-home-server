@@ -5,7 +5,7 @@ heimdall_available_externally: "false"
 # directories
 heimdall_docker_image: linuxserver/heimdall:latest
 
-heimdall_volume: "{{ docker_volume }}/heimdall" # tank/docker/heimdall
+heimdall_volume: "{{ docker_volume }}/heimdall" # dozer/docker/heimdall
 heimdall_mountpoint: "{{ docker_mountpoint }}/heimdall" # /data/docker/heimdall
 
 # network

@@ -3,7 +3,7 @@
 traefik_enabled: false
 
 # directories
-traefik_volume: "{{ docker_volume }}/traefik" # tank/docker/traefik
+traefik_volume: "{{ docker_volume }}/traefik" # dozer/docker/traefik
 traefik_mountpoint: "{{ docker_mountpoint }}/traefik" # /data/docker/traefik
 
 # network

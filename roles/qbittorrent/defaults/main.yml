@@ -7,7 +7,7 @@ qbittorrent_config_directory: "{{ qbittorrent_mountpoint }}/config"
 qbittorrent_download_directory: "{{ downloads_root }}"
 qbittorrent_watch_directory: "{{ torrents_root }}"
 
-qbittorrent_volume: "{{ docker_volume }}/qbittorrent" # tank/docker/qbittorrent
+qbittorrent_volume: "{{ docker_volume }}/qbittorrent" # dozer/docker/qbittorrent
 qbittorrent_mountpoint: "{{ docker_mountpoint }}/qbittorrent" # /data/docker/qbittorrent
 
 # uid / gid

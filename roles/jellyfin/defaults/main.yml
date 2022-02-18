@@ -1,7 +1,7 @@
 jellyfin_enable: false
 jellyfin_available_externally: "false"
 
-jellyfin_volume: "{{ docker_volume }}/jellyfin" # tank/docker/jellyfin
+jellyfin_volume: "{{ docker_volume }}/jellyfin" # dozer/docker/jellyfin
 jellyfin_mountpoint: "{{ docker_mountpoint }}/jellyfin" # /data/docker/jellyfin
 jellyfin_config_directory: "{{ jellyfin_mountpoint }}/config"
 jellyfin_metadata_directory: "{{ jellyfin_mountpoint }}/metadata"

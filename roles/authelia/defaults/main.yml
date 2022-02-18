@@ -9,7 +9,7 @@ session_authelia_secret: "SESSION_SECRET_KEY_HERE"
 storage_encryption_key: "STORAGE_ENCRYPTION_KEY_HERE"
 
 # filesystem :
-authelia_volume: "{{ docker_volume }}/authelia" # tank/docker/authelia
+authelia_volume: "{{ docker_volume }}/authelia" # dozer/docker/authelia
 authelia_mountpoint: "{{ docker_mountpoint }}/authelia" # /data/docker/authelia
 
 authelia_admin_user:
