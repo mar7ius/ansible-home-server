@@ -48,19 +48,6 @@
       exec: off
       compression: off
 
-- name: Create filesystem for docker
-  community.general.zfs:
-    name: '{{ docker_volume }}'
-    state: present
-    extra_zfs_properties:
-      mountpoint: '{{ docker_mountpoint }}'
-
-- name: Create Filesystem docker data
-  community.general.zfs:
-    name: "{{ docker_volume }}/data"
-    state: present
-    extra_zfs_properties:
-      mountpoint: "{{ docker_mountpoint }}/data"
 
 # Secondary pool and filesystems:
 
@@ -71,8 +58,6 @@
   shell: 'zpool create -o ashift={{zfs_secondary_ashift}} {{zfs_secondary_name}} {{zfs_secondary_disk1}}'
   when: 'not (ansible_zfs_pools|length > 1)'
 
-
-## Main pool and filesystems:
 - name: set autoexpand on '{{zfs_secondary_name}}'
   shell: 'zpool set autoexpand=on {{zfs_secondary_name}}'
   when: 'not (ansible_zfs_pools|length > 1 )'
@@ -104,3 +89,17 @@
       mountpoint: '{{ newsgroups_downloads_mountpoint }}'
       recordsize: '1M'
       compression: off
+
+- name: Create filesystem for docker
+  community.general.zfs:
+    name: '{{ docker_volume }}'
+    state: present
+    extra_zfs_properties:
+      mountpoint: '{{ docker_mountpoint }}'
+
+- name: Create Filesystem docker data
+  community.general.zfs:
+    name: "{{ docker_volume }}/data"
+    state: present
+    extra_zfs_properties:
+      mountpoint: "{{ docker_mountpoint }}/data"

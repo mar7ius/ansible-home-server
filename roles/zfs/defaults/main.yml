@@ -12,7 +12,7 @@ zfs_mountpoint_root: /data
 media_volume: "{{ zfs_main_name }}/media"
 media_mountpoint: "{{ zfs_mountpoint_root }}/media"
 
-docker_volume: "{{ zfs_main_name }}/docker"
+docker_volume: "{{ zfs_secondary_name }}/docker"
 docker_mountpoint: "{{ zfs_mountpoint_root }}/docker"
 
 ## Dozer:
