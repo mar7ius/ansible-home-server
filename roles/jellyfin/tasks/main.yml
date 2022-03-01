@@ -50,4 +50,5 @@
       traefik.http.routers.jellyfin.middlewares: "chain-authelia@file"
       traefik.http.services.jellyfin.loadbalancer.server.port: "8096"
     restart_policy: unless-stopped
-    memory: 1g
+    memory: "{{ jellyfin_memory }}"
+    memory_swap: "{{ jellyfin_swap }}"

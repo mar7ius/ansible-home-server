@@ -40,6 +40,7 @@
       WEBUI_PORT: "{{ qbittorrent_port }}"
     restart_policy: unless-stopped
     memory: "{{ qbittorrent_memory }}"
+    memory_swap: "{{ qbittorrent_swap }}"
     labels:
       traefik.enable: "{{ qbittorrent_available_externally }}"
       traefik.http.routers.qbittorrent.rule: "Host(`{{ qbittorrent_hostname }}.{{ server_domain }}`)"

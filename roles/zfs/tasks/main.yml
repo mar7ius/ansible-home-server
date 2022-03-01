@@ -13,7 +13,7 @@
     state: directory
     owner: root
     group: root
-    mode: 0755
+    mode: 0775
 
 - zpool_facts: properties='free,size'
 
@@ -44,7 +44,7 @@
     state: present
     extra_zfs_properties:
       mountpoint: '{{ media_mountpoint }}'
-      recordsize: '1M'
+      recordsize: '1048576' # 1MB
       exec: off
       compression: off
 
@@ -79,7 +79,7 @@
     state: present
     extra_zfs_properties:
       mountpoint: '{{ torrents_downloads_mountpoint }}'
-      recordsize: '16K'
+      recordsize: '16384' # 16KiB
       compression: off
 - name: Create filesystem for newsgroups downloads
   community.general.zfs:
@@ -87,7 +87,7 @@
     state: present
     extra_zfs_properties:
       mountpoint: '{{ newsgroups_downloads_mountpoint }}'
-      recordsize: '1M'
+      recordsize: '1048576' # 1M
       compression: off
 
 - name: Create filesystem for docker

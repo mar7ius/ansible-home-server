@@ -30,6 +30,7 @@
       PGID: "{{ sonarr_group_id }}"
     restart_policy: unless-stopped
     memory: "{{ sonarr_memory }}"
+    memory_swap: "{{ sonarr_swap }}"
     labels:
       traefik.enable: "{{ sonarr_available_externally }}"
       traefik.http.routers.sonarr.rule: "Host(`{{ sonarr_hostname }}.{{ server_domain }}`)"

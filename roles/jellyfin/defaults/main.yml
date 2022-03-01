@@ -19,3 +19,5 @@ jellyfin_spectacles_directory: "{{ speclacles_root }}"
 
 jellyfin_user_id: "0"
 jellyfin_group_id: "0"
+
+jellyfin_memory: "1g"

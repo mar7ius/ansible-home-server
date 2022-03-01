@@ -45,6 +45,7 @@
       PGID: "{{ authelia_group_id }}"
     restart_policy: unless-stopped
     memory: "{{ authelia_memory }}"
+    memory_swap: "{{ authelia_swap }}"
     labels:
       traefik.enable: "true" # External acces - default true
       traefik.http.routers.authelia.rule: "Host(`{{ authelia_hostname }}.{{ server_domain }}`)" # ex. Host(`login.example.com`)

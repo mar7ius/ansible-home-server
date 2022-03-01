@@ -45,6 +45,7 @@
       - "{{ heimdall_port_https }}:443"
     restart_policy: unless-stopped
     memory: "{{ heimdall_memory }}"
+    memory_swap: "{{ heimdall_swap }}"
     labels:
       traefik.enable: "{{ heimdall_available_externally }}"
       traefik.http.routers.heimdall.rule: "Host(`{{ heimdall_hostname }}.{{ server_domain }}`)"
