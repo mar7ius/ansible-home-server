@@ -52,3 +52,4 @@
     restart_policy: unless-stopped
     memory: "{{ jellyfin_memory }}"
     memory_swap: "{{ jellyfin_swap }}"
+    recreate: "{{ recreate_containers }}"

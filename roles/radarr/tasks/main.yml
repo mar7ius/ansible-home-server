@@ -40,3 +40,4 @@
       traefik.http.routers.radarr.tls.domains[0].sans: "{{ server_domain }}"
       traefik.http.routers.radarr.middlewares: "chain-authelia@file"
       traefik.http.services.radarr.loadbalancer.server.port: "{{ radarr_port }}"
+    recreate: "{{ recreate_containers }}"

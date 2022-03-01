@@ -54,4 +54,5 @@
       traefik.http.routers.authelia.tls.domains[0].main: "*.{{ server_domain }}"
       traefik.http.routers.authelia.tls.domains[0].sans: "{{ server_domain }}"
       traefik.http.services.authelia.loadbalancer.server.port: "9091"
-    recreate: "{{ authelia_config is changed }}"
+    # recreate: "{{ authelia_config is changed }}"
+    recreate: "{{ recreate_containers }}"

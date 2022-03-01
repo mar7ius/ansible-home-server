@@ -45,3 +45,4 @@
       traefik.http.routers.portainer.tls.domains[0].sans: "{{ server_domain }}"
       traefik.http.routers.portainer.middlewares: "chain-authelia@file"
       traefik.http.services.portainer.loadbalancer.server.port: "9000"
+    recreate: "{{ recreate_containers }}"

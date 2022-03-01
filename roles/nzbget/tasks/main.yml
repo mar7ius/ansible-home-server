@@ -39,3 +39,4 @@
       traefik.http.routers.nzbget.tls.domains[0].sans: "{{ server_domain }}"
       traefik.http.routers.nzbget.middlewares: "chain-authelia@file"
       traefik.http.services.nzbget.loadbalancer.server.port: "{{ nzbget_port }}"
+    recreate: "{{ recreate_containers }}"

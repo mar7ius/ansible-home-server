@@ -74,4 +74,5 @@
     restart_policy: unless-stopped
     memory: "{{ traefik_memory }}"
     memory_swap: "{{ traefik_swap }}"
-    recreate: "{{ template_config is changed }}"
+    # recreate: "{{ template_config is changed }}"
+    recreate: "{{ recreate_containers }}"

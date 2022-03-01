@@ -50,3 +50,4 @@
       traefik.http.routers.qbittorrent.tls.domains[0].sans: "{{ server_domain }}"
       traefik.http.routers.qbittorrent.middlewares: "chain-authelia@file"
       traefik.http.services.qbittorrent.loadbalancer.server.port: "{{ qbittorrent_port }}"
+    recreate: "{{ recreate_containers }}"
