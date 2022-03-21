@@ -54,7 +54,7 @@
       - "{{ traefik_port_https }}:443"
       - "{{ traefik_port_ui }}:8083"
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      # - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "{{ traefik_mountpoint }}/rules:/rules:rw" # Dynamic configuration
       - "{{ traefik_mountpoint }}/certs:/certs:rw" # Cloudflare Origin Certs
       - "{{ traefik_mountpoint }}/traefik.yml:/etc/traefik/traefik.yml:ro" # static config file
