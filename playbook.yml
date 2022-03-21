@@ -39,6 +39,11 @@
         - docker_custom_network
       when: ( docker_enable | default(False))
 
+    - role: docker_socket_proxy
+      tags:
+        - docker_socket_proxy
+      when: ( docker_enable | default(False))
+
     ## Networking/proxiying:
     - role: authelia
       tags:
