@@ -22,13 +22,15 @@
 
 - name: Create Docker home directory
   file:
-    path: "{{ docker_home }}"
+    # path: "{{ docker_home }}"
+    path: "/docker"
     mode: 0775
     state: directory
 
 - name: Create Docker home directory
   file:
-    path: "{{ docker_mountpoint }}/data"
+    path: "/docker/data"
+    # path: "{{ docker_mountpoint }}/data"
     mode: 0775
     state: directory
 
