@@ -27,8 +27,10 @@
     networks_cli_compatible: yes
     volumes:
       - "{{ cloudflare_mountpoint }}/config.yml:/app/config.yaml"
+    env:
+      CRON: "0 */2 * * *"
     restart_policy: unless-stopped
     memory: "{{ cloudflare_memory }}"
     memory_swap: "{{ cloudflare_swap }}"
-    # recreate: "{{ template_files_result is changed }}"
-    recreate: "{{ recreate_containers }}"
+    recreate: "{{ template_files_result is changed }}"
+    # recreate: "{{ recreate_containers }}"

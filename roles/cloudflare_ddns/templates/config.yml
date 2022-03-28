@@ -7,3 +7,8 @@ domains:
     proxied: {{ cloudflare_proxy | bool }}
     create: true
     zoneName: "{{ cloudflare_zone }}"
+  - name: "{{ cloudflare_zone_2 }}"
+    type: "{{ cloudflare_type }}"
+    proxied: {{ cloudflare_proxy | bool }}
+    create: true
+    zoneName: "{{ cloudflare_zone_2 }}"
